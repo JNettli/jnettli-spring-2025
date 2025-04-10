@@ -1,4 +1,4 @@
-function VenueList() {
+function Checkout() {
     return (
         <>
             <div className="bg-blue-600 min-w-screen">
@@ -10,4 +10,4 @@ function VenueList() {
     );
 }
 
-export default VenueList;
+export default Checkout;

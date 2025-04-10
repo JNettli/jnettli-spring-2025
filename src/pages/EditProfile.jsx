@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 
-function App() {
+function EditProfile() {
     return (
         <>
             <div className="flex justify-center">
                 <div className="bg-white max-w-7xl min-w-5xl">
-                    <p className="text-lg">Home Page</p>
+                    <p className="text-lg">Edit Profile</p>
                     <Link to={"/checkout"}>Checkout!</Link>
                 </div>
             </div>
@@ -13,4 +13,4 @@ function App() {
     );
 }
 
-export default App;
+export default EditProfile;
