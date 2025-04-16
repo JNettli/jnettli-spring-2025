@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 
-function Venue() {
+function About() {
     return (
         <>
             <div className="flex justify-center">
                 <div className="bg-white max-w-7xl min-w-5xl">
-                    <p className="text-lg">All Venues!</p>
+                    <p className="text-lg">About Us</p>
                     <Link to={"/checkout"}>Checkout!</Link>
                 </div>
             </div>
@@ -13,4 +13,4 @@ function Venue() {
     );
 }
 
-export default Venue;
+export default About;

@@ -2,7 +2,16 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { Layout } from "./assets/Layout";
-import { App, Venue, Checkout, Profile } from "./pages/Pages";
+import {
+    App,
+    Venue,
+    Checkout,
+    Profile,
+    EditProfile,
+    EditVenue,
+    Success,
+    About,
+} from "./pages/Pages";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -19,12 +28,28 @@ const router = createBrowserRouter([
                 element: <Checkout />,
             },
             {
-                path: "/venues/:venueId",
+                path: "/checkout/success",
+                element: <Success />,
+            },
+            {
+                path: "/venues",
                 element: <Venue />,
+            },
+            {
+                path: "venues/edit",
+                element: <EditVenue />,
             },
             {
                 path: "/profile",
                 element: <Profile />,
+            },
+            {
+                path: "/profile/edit",
+                element: <EditProfile />,
+            },
+            {
+                path: "/about",
+                element: <About />,
             },
         ],
     },

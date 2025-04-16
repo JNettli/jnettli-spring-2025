@@ -10,6 +10,12 @@ function Footer() {
             >
                 VenueList
             </Link>
+            <Link
+                to={"/about"}
+                className="hover:text-[#81BFDA] transition duration-150"
+            >
+                VenueList
+            </Link>
         </footer>
     );
 }
