@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import LoginModal from "./LoginModal";
 
 function Header() {
     return (
@@ -21,12 +22,7 @@ function Header() {
                     </div>
                 </div>
             </div>
-            <Link
-                to={"/profile"}
-                className="bg-[#007A8D] rounded-lg px-4 pt-3 hover:text-white transition duration-150"
-            >
-                Profile
-            </Link>
+            <LoginModal />
         </header>
     );
 }
