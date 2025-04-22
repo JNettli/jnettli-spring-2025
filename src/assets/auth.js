@@ -1,5 +1,5 @@
 import { APILogin, APIRegister } from "./Constants";
-import { showError } from "./functions";
+import { showError } from "./components/functions";
 
 export const headerKey = "78ddf18d-7d41-498d-939d-195c2b76f939";
 
