@@ -29,6 +29,10 @@ export function showError(link, message) {
     }, 2000);
 }
 
+export function isLoggedIn() {
+    return !!localStorage.getItem("token");
+}
+
 export function checkLogin() {
     if (!localStorage.getItem("token")) {
         alert("You need to be logged in to access this page.");

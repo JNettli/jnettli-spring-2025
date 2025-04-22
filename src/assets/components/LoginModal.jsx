@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
+import { login, logout } from "../auth";
+import { register } from "../auth";
+import { isLoggedIn, showError } from "./functions";
 
 export default function LoginModal() {
     const [isOpen, setIsOpen] = useState(false);
     const [fade, setFade] = useState(false);
     const [isRegister, setIsRegister] = useState(false);
+    const [userName, setUserName] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [passwordScore, setPasswordScore] = useState(0);
+    const [userType, setUserType] = useState("");
 
     useEffect(() => {
         if (isOpen) {
@@ -51,13 +57,35 @@ export default function LoginModal() {
         setPasswordScore(score);
     }, [password]);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(isRegister);
+        if (isRegister) {
+            try {
+                await register(userName, email, password, userType);
+                console.log("Registered!");
+            } catch (error) {
+                showError("Registration failed.", error);
+            }
+        } else {
+            try {
+                await login(email, password);
+                console.log("Logged in!");
+            } catch (error) {
+                showError("Login failed.", error);
+            }
+        }
+    };
+
+    const isAuth = isLoggedIn();
+
     return (
         <>
             <button
-                onClick={() => setIsOpen(true)}
+                onClick={() => (isAuth ? logout() : setIsOpen(true))}
                 className="bg-[#007A8D] text-white px-4 py-2 rounded-md hover:bg-[#006473] transition hover:cursor-pointer"
             >
-                Login
+                {isAuth ? "Logout" : "Login"}
             </button>
 
             {isOpen && (
@@ -88,7 +116,7 @@ export default function LoginModal() {
                                 : "Login to Holidaze"}
                         </h2>
 
-                        <form className="space-y-4">
+                        <form className="space-y-4" onSubmit={handleSubmit}>
                             {isRegister && (
                                 <div>
                                     <label
@@ -101,6 +129,10 @@ export default function LoginModal() {
                                         type="text"
                                         id="username"
                                         placeholder="Username"
+                                        value={userName}
+                                        onChange={(e) =>
+                                            setUserName(e.target.value)
+                                        }
                                         required
                                         className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#007A8D]"
                                     />
@@ -118,6 +150,8 @@ export default function LoginModal() {
                                     type="email"
                                     id="email"
                                     placeholder="E-mail"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#007A8D]"
                                 />
@@ -161,6 +195,25 @@ export default function LoginModal() {
                                                 }`}
                                             ></div>
                                         </div>
+                                        <p className="mt-4 text-sm font-medium text-gray-700">
+                                            What kind of user are you?
+                                        </p>
+                                        <select
+                                            id="user-type"
+                                            value={userType}
+                                            onChange={(e) =>
+                                                setUserType(e.target.value)
+                                            }
+                                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="">
+                                                Select user type
+                                            </option>
+                                            <option value="false">User</option>
+                                            <option value="true">
+                                                Venue Manager
+                                            </option>
+                                        </select>
                                     </>
                                 )}
                             </div>
@@ -176,16 +229,6 @@ export default function LoginModal() {
                                             Remember me
                                         </span>
                                     </label>
-
-                                    <button
-                                        type="button"
-                                        className="text-sm text-[#007A8D] hover:underline hover:cursor-pointer"
-                                        onClick={() =>
-                                            alert("Forgot password flow TBD")
-                                        }
-                                    >
-                                        Forgot password?
-                                    </button>
                                 </div>
                             )}
 
