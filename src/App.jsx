@@ -37,18 +37,25 @@ function App() {
             try {
                 const filterQuery = Object.entries(filters)
                     .filter(([, value]) => value !== undefined)
-                    .map(([key, value]) => `${key}=${value}`)
+                    .map(([key, value]) => `meta.${key}=${value}`)
                     .join("&");
+
+                const sortField = "rating";
+                const sortOrder = "desc";
+
                 const res = await fetch(
                     APIVenues +
                         "?_owner=true&_bookings=true&limit=" +
                         venuesPerPage +
                         "&page=" +
                         currentPage +
-                        "&sort=rating" +
-                        "&sortOrder=desc" +
+                        "&sort=" +
+                        sortField +
+                        "&sortOrder=" +
+                        sortOrder +
                         (filterQuery ? `&${filterQuery}` : "")
                 );
+                console.log(res.url);
                 const data = await res.json();
                 setVenues(data.data);
                 setTotalVenues(data.meta?.totalCount || 0);
@@ -68,9 +75,9 @@ function App() {
             else newParams.delete(key);
         });
 
-        newParams.set("page", currentPage);
+        newParams.set("page", currentPage.toString());
         setSearchParams(newParams);
-    }, [filters]);
+    }, [filters, currentPage, searchParams, setSearchParams]);
 
     const renderPageButtons = () => {
         const pageButtons = [];
@@ -128,23 +135,6 @@ function App() {
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
                 onClick={() => {
                     setFilters(pendingFilters);
-                    setSearchParams((prev) => {
-                        const newParams = new URLSearchParams(prev.toString());
-
-                        Object.entries(pendingFilters).forEach(
-                            ([key, value]) => {
-                                if (value === undefined) {
-                                    newParams.delete(key);
-                                } else {
-                                    newParams.set(key, value.toString());
-                                }
-                            }
-                        );
-
-                        newParams.set("page", "1"); // Reset to first page on filter apply
-
-                        return newParams;
-                    });
                 }}
             >
                 Apply Filters
