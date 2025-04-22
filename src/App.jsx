@@ -8,12 +8,25 @@ function App() {
     const [totalVenues, setTotalVenues] = useState(0);
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const [filters, setFilters] = useState({
-        wifi: false,
-        parking: false,
-        pets: false,
-        breakfast: false,
+    const defaultFilters = {
+        wifi: undefined,
+        parking: undefined,
+        pets: undefined,
+        breakfast: undefined,
+    };
+
+    const [filters, setFilters] = useState(() => {
+        const urlFilters = {};
+        for (const key of Object.keys(defaultFilters)) {
+            const value = searchParams.get(key);
+            if (value === "true") urlFilters[key] = true;
+            else if (value === "false") urlFilters[key] = false;
+            else urlFilters[key] = undefined;
+        }
+        return urlFilters;
     });
+
+    const [pendingFilters, setPendingFilters] = useState(filters);
 
     const currentPage = parseInt(searchParams.get("page")) || 1;
     const venuesPerPage = 25;
@@ -22,6 +35,10 @@ function App() {
     useEffect(() => {
         async function getVenues() {
             try {
+                const filterQuery = Object.entries(filters)
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join("&");
                 const res = await fetch(
                     APIVenues +
                         "?_owner=true&_bookings=true&limit=" +
@@ -29,7 +46,8 @@ function App() {
                         "&page=" +
                         currentPage +
                         "&sort=rating" +
-                        "&sortOrder=desc"
+                        "&sortOrder=desc" +
+                        (filterQuery ? `&${filterQuery}` : "")
                 );
                 const data = await res.json();
                 setVenues(data.data);
@@ -39,13 +57,20 @@ function App() {
             }
         }
         getVenues();
-    }, [currentPage]);
+    }, [currentPage, filters]);
 
-    const filteredVenues = venues.filter((venue) => {
-        return Object.entries(filters).every(([key, value]) => {
-            return !value || venue.meta?.[key];
+    useEffect(() => {
+        const newParams = new URLSearchParams(searchParams.toString());
+
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value === true) newParams.set(key, "true");
+            else if (value === false) newParams.set(key, "false");
+            else newParams.delete(key);
         });
-    });
+
+        newParams.set("page", currentPage);
+        setSearchParams(newParams);
+    }, [filters]);
 
     const renderPageButtons = () => {
         const pageButtons = [];
@@ -95,10 +120,44 @@ function App() {
 
     return (
         <>
-            <Filter onFilterChange={setFilters} />
+            <Filter
+                filters={pendingFilters}
+                onFilterChange={setPendingFilters}
+            />
+            <button
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                onClick={() => {
+                    setFilters(pendingFilters);
+                    setSearchParams((prev) => {
+                        const newParams = new URLSearchParams(prev.toString());
+
+                        Object.entries(pendingFilters).forEach(
+                            ([key, value]) => {
+                                if (value === undefined) {
+                                    newParams.delete(key);
+                                } else {
+                                    newParams.set(key, value.toString());
+                                }
+                            }
+                        );
+
+                        newParams.set("page", "1"); // Reset to first page on filter apply
+
+                        return newParams;
+                    });
+                }}
+            >
+                Apply Filters
+            </button>
+            <button
+                className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded transition duration-150"
+                onClick={() => setPendingFilters(defaultFilters)}
+            >
+                Clear All Filters
+            </button>
             <div className="max-w-7xl mx-auto p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    {filteredVenues.map((venue) => (
+                    {venues.map((venue) => (
                         <div
                             key={venue.id}
                             className="bg-red-400 rounded-lg p-4 flex flex-col gap-2"
