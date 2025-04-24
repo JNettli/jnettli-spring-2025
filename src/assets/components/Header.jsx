@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
+import { isLoggedIn } from "./functions";
 
 function Header() {
+    const loggedIn = isLoggedIn();
+    const profileId = "/profile/" + localStorage.getItem("userName");
     return (
-        <header className="flex justify-between px-16 py-2 min-w-screen border-b border-b-slate-900/50">
+        <header className="flex justify-between px-16 py-2 border-b border-b-slate-900/50">
             <Link to={"/"} className="bg-[#007A8D] rounded-lg px-4 pt-3">
                 Holidaze
             </Link>
@@ -22,6 +25,14 @@ function Header() {
                     </div>
                 </div>
             </div>
+            {loggedIn && (
+                <Link
+                    to={profileId}
+                    className="bg-[#007A8D] rounded-lg px-4 pt-3"
+                >
+                    Profile
+                </Link>
+            )}
             <LoginModal />
         </header>
     );

@@ -1,6 +1,6 @@
 import { APILogin, APIRegister } from "./Constants";
 
-export const headerKey = "78ddf18d-7d41-498d-939d-195c2b76f939";
+export const APIKEY = import.meta.env.VITE_API_KEY;
 
 export async function login(email, password) {
     const loginResponse = await fetch(APILogin, {
@@ -24,15 +24,15 @@ export async function login(email, password) {
     }
 }
 
-export async function register(userName, email, password, userType) {
+export async function register(name, email, password, userType) {
     const registerResponse = await fetch(APIRegister, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userName, email, password, userType }),
+        body: JSON.stringify({ name, email, password, userType }),
     });
-
+    console.log(JSON.stringify({ name, email, password, userType }));
     if (registerResponse.ok) {
         alert("Registration successful! Please login to continue.");
     } else {

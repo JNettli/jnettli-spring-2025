@@ -59,10 +59,10 @@ export default function LoginModal() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(isRegister);
         if (isRegister) {
             try {
                 await register(userName, email, password, userType);
+                console.log(register);
                 console.log("Registered!");
             } catch (error) {
                 showError("Registration failed.", error);
@@ -182,7 +182,7 @@ export default function LoginModal() {
                                         </p>
                                         <div className="mt-2 h-2 w-full bg-gray-200 rounded-lg overflow-hidden">
                                             <div
-                                                className={`h-full transition-all duration-300 ${
+                                                className={`h-full transition-all duration-450 ${
                                                     passwordScore === 0
                                                         ? "w-0"
                                                         : passwordScore === 1

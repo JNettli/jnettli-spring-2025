@@ -7,6 +7,7 @@ import {
     Venue,
     Checkout,
     Profile,
+    CreateVenue,
     EditProfile,
     EditVenue,
     Success,
@@ -32,19 +33,23 @@ const router = createBrowserRouter([
                 element: <Success />,
             },
             {
+                path: "/create",
+                element: <CreateVenue />,
+            },
+            {
                 path: "/venue/:venueId",
                 element: <Venue />,
             },
             {
-                path: "venues/edit",
+                path: "venues/edit/:venueId",
                 element: <EditVenue />,
             },
             {
-                path: "/profile",
+                path: "/profile/:profileId",
                 element: <Profile />,
             },
             {
-                path: "/profile/edit",
+                path: "/profile/edit/:profileId",
                 element: <EditProfile />,
             },
             {

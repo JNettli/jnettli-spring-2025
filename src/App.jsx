@@ -4,6 +4,7 @@ import { APIVenues } from "./assets/Constants";
 import Filter from "./assets/components/Filter";
 
 function App() {
+    document.title = "Holidaze | Find your new vacation spot";
     const [venues, setVenues] = useState([]);
     const [totalVenues, setTotalVenues] = useState(0);
 
@@ -55,7 +56,6 @@ function App() {
                         sortOrder +
                         (filterQuery ? `&${filterQuery}` : "")
                 );
-                console.log(res.url);
                 const data = await res.json();
                 setVenues(data.data);
                 setTotalVenues(data.meta?.totalCount || 0);

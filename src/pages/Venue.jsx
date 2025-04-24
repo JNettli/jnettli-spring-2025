@@ -14,7 +14,7 @@ function Venue() {
                 const res = await fetch(APIVenues + "/" + venueId);
                 const data = await res.json();
                 console.log(data.data);
-                document.title = "Holidaze - " + data.data.name;
+                document.title = data.data.name + " | Holidaze";
                 setVenue(data.data);
             } catch (error) {
                 console.error("Error fetching venue:", error);
