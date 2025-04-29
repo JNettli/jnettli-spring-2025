@@ -9,6 +9,10 @@ function Profile() {
     const profileMail = localStorage.getItem("userId");
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [venues, setVenues] = useState([]);
+    const [venuesLoading, setVenuesLoading] = useState(true);
+    const [bookings, setBookings] = useState([]);
+    const [bookingsLoading, setBookingsLoading] = useState(true);
 
     useEffect(() => {
         if (!profileId) return;
@@ -39,6 +43,62 @@ function Profile() {
         fetchProfile();
     }, [profileId]);
 
+    useEffect(() => {
+        if (!profile?.name) return;
+
+        async function fetchVenues() {
+            try {
+                const res = await fetch(
+                    `${APIProfile}/${profile.name}/venues`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "token"
+                            )}`,
+                            "X-Noroff-API-Key": APIKEY,
+                        },
+                    }
+                );
+                const data = await res.json();
+                setVenues(data.data);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setVenuesLoading(false);
+            }
+        }
+
+        fetchVenues();
+    }, [profile]);
+
+    useEffect(() => {
+        if (!profile?.name) return;
+
+        async function fetchBookings() {
+            try {
+                const res = await fetch(
+                    `${APIProfile}/${profile.name}/bookings`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "token"
+                            )}`,
+                            "X-Noroff-API-Key": APIKEY,
+                        },
+                    }
+                );
+                const data = await res.json();
+                setBookings(data.data);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setBookingsLoading(false);
+            }
+        }
+
+        fetchBookings();
+    }, [profile]);
+
     const editProfile = "/profile/edit/" + profileMail;
 
     if (loading) {
@@ -50,7 +110,7 @@ function Profile() {
     }
 
     return (
-        <div className="flex justify-center">
+        <div className="flex flex-col justify-center">
             <div className="bg-white max-w-7xl min-w-5xl">
                 <p className="text-lg">Profile Page</p>
                 <img src={profile.banner.url} alt={profile.banner.alt} />
@@ -69,7 +129,7 @@ function Profile() {
                 >
                     Edit Profile!
                 </Link>
-                {isLoggedIn ? (
+                {isLoggedIn && profile.venueManager ? (
                     <Link
                         to={"/create"}
                         className="bg-blue-500 px-4 py-2 rounded ml-2"
@@ -79,6 +139,79 @@ function Profile() {
                 ) : (
                     ""
                 )}
+            </div>
+            <div className="mt-8 w-full max-w-7xl flex">
+                <div>
+                    <h2 className="text-xl font-semibold mb-4">My Venues</h2>
+                    {venuesLoading ? (
+                        <div>Loading venues...</div>
+                    ) : venues.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {venues.map((venue) => (
+                                <Link
+                                    to={`/venue/${venue.id}`}
+                                    key={venue.id}
+                                    className="border p-4 rounded"
+                                >
+                                    <img
+                                        src={
+                                            venue.media?.[0]?.url ||
+                                            "/placeholder.jpg"
+                                        }
+                                        className="h-40 w-full object-cover rounded"
+                                    />
+                                    <h3 className="text-lg font-bold mt-2 truncate">
+                                        {venue.name}
+                                    </h3>
+                                    <p className="text-gray-600">
+                                        {venue.location?.city},{" "}
+                                        {venue.location?.country}
+                                    </p>
+                                    <p className="text-gray-800 font-semibold">
+                                        ${venue.price}
+                                    </p>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>No venues found.</p>
+                    )}
+                </div>
+                <div className="w-full">
+                    <h2 className="text-xl font-semibold mb-4">My Bookings</h2>
+                    {bookingsLoading ? (
+                        <div>Loading bookings...</div>
+                    ) : bookings.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {bookings.map((booking) => (
+                                <Link
+                                    to={`/venue/${booking.id}`}
+                                    key={booking.id}
+                                    className="border p-4 rounded"
+                                >
+                                    <img
+                                        src={
+                                            booking.media?.[0]?.url ||
+                                            "/placeholder.jpg"
+                                        }
+                                        className="h-40 w-full object-cover rounded"
+                                    />
+                                    <h3 className="text-lg font-bold mt-2 truncate">
+                                        {booking.name}
+                                    </h3>
+                                    <p className="text-gray-600">
+                                        {booking.location?.city}
+                                    </p>
+                                    <p className="text-gray-800 font-semibold">
+                                        ${booking.price}
+                                    </p>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>No bookings found.</p>
+                    )}
+                </div>
             </div>
         </div>
     );
