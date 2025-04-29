@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { APIProfile } from "../assets/Constants";
 import { APIKEY } from "../assets/auth";
+import { isLoggedIn } from "../assets/components/functions";
 
 function Profile() {
     const profileId = localStorage.getItem("userName");
@@ -68,12 +69,16 @@ function Profile() {
                 >
                     Edit Profile!
                 </Link>
-                <Link
-                    to={"/create"}
-                    className="bg-blue-500 px-4 py-2 rounded ml-2"
-                >
-                    Create Venue
-                </Link>
+                {isLoggedIn ? (
+                    <Link
+                        to={"/create"}
+                        className="bg-blue-500 px-4 py-2 rounded ml-2"
+                    >
+                        Create Venue
+                    </Link>
+                ) : (
+                    ""
+                )}
             </div>
         </div>
     );

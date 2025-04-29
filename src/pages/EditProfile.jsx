@@ -7,13 +7,10 @@ function EditProfile() {
     const profileId = localStorage.getItem("userName");
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        name: "",
-        email: "",
         bio: "",
         avatarUrl: "",
-        avatarAlt: "",
         bannerUrl: "",
-        bannerAlt: "",
+        venueManager: false,
     });
     const [loading, setLoading] = useState(true);
 
@@ -32,11 +29,14 @@ function EditProfile() {
                 const profile = data.data;
 
                 setFormData({
-                    name: profile.name || "",
-                    email: profile.email || "",
                     bio: profile.bio || "",
-                    avatarUrl: profile.avatar?.url || "",
-                    bannerUrl: profile.banner?.url || "",
+                    avatarUrl:
+                        profile.avatar?.url ||
+                        "https://images.unsplash.com/photo-1579547945413-497e1b99dac0?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&h=400&w=400",
+                    bannerUrl:
+                        profile.banner?.url ||
+                        "https://images.unsplash.com/photo-1579547945413-497e1b99dac0?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&h=500&w=1500",
+                    venueManager: profile.venueManager || "false",
                 });
             } catch (error) {
                 console.error("Error loading profile:", error);
@@ -50,28 +50,16 @@ function EditProfile() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        const updatedValue =
+            name === "profileManager" ? value === "true" : value;
         setFormData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: updatedValue,
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const payload = {
-            name: formData.name,
-            email: formData.email,
-            bio: formData.bio,
-            avatar: {
-                url: formData.avatarUrl,
-                alt: formData.avatarAlt,
-            },
-            banner: {
-                url: formData.bannerUrl,
-                alt: formData.bannerAlt,
-            },
-        };
 
         try {
             const res = await fetch(`${APIProfile}/${profileId}`, {
@@ -81,7 +69,16 @@ function EditProfile() {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                     "X-Noroff-API-Key": APIKEY,
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify({
+                    bio: formData.bio,
+                    avatar: {
+                        url: formData.avatarUrl,
+                    },
+                    banner: {
+                        url: formData.bannerUrl,
+                    },
+                    venueManager: formData.profileManager,
+                }),
             });
 
             if (!res.ok) {
@@ -113,6 +110,7 @@ function EditProfile() {
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
                         rows={5}
+                        maxLength={160}
                     />
                 </label>
 
@@ -139,6 +137,7 @@ function EditProfile() {
                 </label>
 
                 <select
+                    name="profileManager"
                     value={formData.profileManager}
                     onChange={handleChange}
                     className="w-full px-3 py-2 mt-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
