@@ -42,6 +42,7 @@ const MapPicker = ({ onLocationSelect }) => {
             click: async (e) => {
                 const { lat, lng } = e.latlng;
                 setMarkerPosition([lat, lng]);
+                console.log(lat, lng);
 
                 const locationInfo = await getAddress(lat, lng);
 
@@ -70,19 +71,44 @@ const MapPicker = ({ onLocationSelect }) => {
 };
 
 function MapDisplay({ lat, lng }) {
-    return (
-        <MapContainer
-            center={[lat, lng]}
-            zoom={13}
-            style={{ height: "400px", width: "100%" }}
-        >
-            <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; OpenStreetMap contributors"
-            />
-            <Marker position={[lat, lng]} />
-        </MapContainer>
-    );
+    if (lat === null || lng === null) {
+        return (
+            <p>
+                There seems to be an issue with the provided map data. Ask the
+                venue manager for updated map details!
+            </p>
+        );
+    } else if (lat === 0 && lng === 0) {
+        lat = -50.605630278205524;
+        lng = 165.9734630584717;
+        return (
+            <MapContainer
+                center={[lat, lng]}
+                zoom={13}
+                style={{ height: "400px", width: "100%" }}
+            >
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution="&copy; OpenStreetMap contributors"
+                />
+                <Marker position={[lat, lng]} />
+            </MapContainer>
+        );
+    } else {
+        return (
+            <MapContainer
+                center={[lat, lng]}
+                zoom={13}
+                style={{ height: "400px", width: "100%" }}
+            >
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution="&copy; OpenStreetMap contributors"
+                />
+                <Marker position={[lat, lng]} />
+            </MapContainer>
+        );
+    }
 }
 
 export { MapPicker, MapDisplay };
