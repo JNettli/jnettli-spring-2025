@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { APIProfile } from "../assets/Constants";
 import { APIKEY } from "../assets/auth";
-import { isLoggedIn } from "../assets/components/functions";
+import { checkLogin, isLoggedIn } from "../assets/components/functions";
 
 function Profile() {
     const profileId = localStorage.getItem("userName");
@@ -15,7 +15,9 @@ function Profile() {
     const [bookingsLoading, setBookingsLoading] = useState(true);
 
     useEffect(() => {
-        if (!profileId) return;
+        if (!profileId) {
+            checkLogin();
+        }
 
         async function fetchProfile() {
             try {

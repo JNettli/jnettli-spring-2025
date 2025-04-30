@@ -18,8 +18,10 @@ const MapPicker = ({ onLocationSelect }) => {
                 `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
             );
             const data = await res.json();
+            console.log(data);
             return {
                 address: data.address.road || "",
+                houseNumber: data.address.house_number || "",
                 city:
                     data.address.city ||
                     data.address.town ||

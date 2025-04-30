@@ -56,12 +56,12 @@ function CreateVenue() {
                 },
             }));
         } else if (name.includes("location.")) {
-            const locField = name.split(".")[1];
+            const locationField = name.split(".")[1];
             setFormData((prev) => ({
                 ...prev,
                 location: {
                     ...prev.location,
-                    [locField]: value,
+                    [locationField]: value,
                 },
             }));
         } else if (name.includes("media.")) {
@@ -80,7 +80,6 @@ function CreateVenue() {
             }));
         }
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -89,12 +88,11 @@ function CreateVenue() {
             media: formData.media.url ? [{ url: formData.media.url }] : [],
             location: {
                 ...formData.location,
-                address: formData.houseNumber
-                    ? `${formData.location.address} ${formData.houseNumber}`
+                address: formData.location.houseNumber
+                    ? `${formData.location.address} ${formData.location.houseNumber}`
                     : formData.location.address,
             },
         };
-        console.log(finalFormData);
 
         try {
             const res = await fetch(APIVenues, {
@@ -252,9 +250,9 @@ function CreateVenue() {
                         type="text"
                         placeholder="House Number"
                         name="houseNumber"
-                        value={formData.houseNumber}
-                        onChange={handleChange}
-                        className="border p-2 rounded"
+                        value={formData.location.houseNumber}
+                        readOnly
+                        className="border p-2 rounded bg-gray-100"
                     />
 
                     <input
