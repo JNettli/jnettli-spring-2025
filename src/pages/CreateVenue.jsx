@@ -2,7 +2,7 @@ import { useState } from "react";
 import { checkLogin } from "../assets/components/functions";
 import { APIVenues } from "../assets/Constants";
 import { Link, useNavigate } from "react-router-dom";
-import MapPicker from "../assets/components/Map";
+import { MapPicker } from "../assets/components/Map";
 import { APIKEY } from "../assets/auth";
 
 function CreateVenue() {

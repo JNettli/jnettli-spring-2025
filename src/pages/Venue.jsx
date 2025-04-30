@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { APIVenues } from "../assets/Constants";
+import { MapDisplay } from "../assets/components/Map";
 
 function Venue() {
     const { venueId } = useParams();
@@ -39,14 +40,13 @@ function Venue() {
             <p>Address: {venue.location.address}</p>
             <p>City: {venue.location.city}</p>
             <p>Country: {venue.location.country}</p>
-            <p>Latitude: {venue.location.lat}</p>
-            <p>Longitude: {venue.location.lng}</p>
             <p>Zip code: {venue.location.zip}</p>
             <p>Max Guests: {venue.maxGuests}</p>
             <p>Wifi: {venue.meta.wifi ? "Yes" : "No"}</p>
             <p>Breakfast: {venue.meta.breakfast ? "Yes" : "No"}</p>
             <p>Pets: {venue.meta.pets ? "Yes" : "No"}</p>
             <p>Parking: {venue.meta.parking ? "Yes" : "No"}</p>
+            <MapDisplay lat={venue.location.lat} lng={venue.location.lng} />
         </div>
     );
 }
