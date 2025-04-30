@@ -4,9 +4,9 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 const customMarkerIcon = new L.Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
+    iconUrl: "/img/location.svg",
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
 });
 
 const MapPicker = ({ onLocationSelect }) => {
@@ -18,7 +18,6 @@ const MapPicker = ({ onLocationSelect }) => {
                 `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
             );
             const data = await res.json();
-            console.log(data);
             return {
                 address: data.address.road || "",
                 houseNumber: data.address.house_number || "",
@@ -44,7 +43,6 @@ const MapPicker = ({ onLocationSelect }) => {
             click: async (e) => {
                 const { lat, lng } = e.latlng;
                 setMarkerPosition([lat, lng]);
-                console.log(lat, lng);
 
                 const locationInfo = await getAddress(lat, lng);
 
@@ -93,7 +91,7 @@ function MapDisplay({ lat, lng }) {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
                 />
-                <Marker position={[lat, lng]} />
+                <Marker position={[lat, lng]} icon={customMarkerIcon} />
             </MapContainer>
         );
     } else {
@@ -107,7 +105,7 @@ function MapDisplay({ lat, lng }) {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
                 />
-                <Marker position={[lat, lng]} />
+                <Marker position={[lat, lng]} icon={customMarkerIcon} />
             </MapContainer>
         );
     }

@@ -233,10 +233,9 @@ function CreateVenue() {
 
                 <fieldset className="border p-2 rounded flex flex-col gap-4">
                     <legend className="text-lg font-semibold">Location</legend>
-                    <p>
-                        Click on the map to get address. Remember to add house
-                        number!
-                    </p>
+                    <h3 className="text-center text-xl font-bold">
+                        Click your venue on the map!
+                    </h3>
                     <MapPicker onLocationSelect={handleLocationSelect} />
 
                     <input
@@ -249,7 +248,6 @@ function CreateVenue() {
                     <input
                         type="text"
                         placeholder="House Number"
-                        name="houseNumber"
                         value={formData.location.houseNumber}
                         readOnly
                         className="border p-2 rounded bg-gray-100"
