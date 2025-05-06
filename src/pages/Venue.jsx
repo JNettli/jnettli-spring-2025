@@ -1,15 +1,18 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { APIBookings, APIVenues } from "../assets/Constants";
 import { MapDisplay } from "../assets/components/Map";
 import { DateRange } from "react-date-range";
 import { eachDayOfInterval } from "date-fns";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { APIKEY } from "../assets/auth";
 
 function Venue() {
     const { venueId } = useParams();
     const [venue, setVenue] = useState(null);
+    const leftCalendar = useRef(null);
+    const rightCalendar = useRef(null);
     const [dateRange, setDateRange] = useState([
         {
             startDate: new Date(),
@@ -24,6 +27,44 @@ function Venue() {
             end: new Date(booking.dateTo),
         })
     );
+    const [guests, setGuests] = useState(1);
+
+    useEffect(() => {
+        const calendars = document.querySelectorAll(".rdrMonth");
+        if (calendars.length === 2) {
+            leftCalendar.current = calendars[0];
+            rightCalendar.current = calendars[1];
+        }
+    }, [venue]);
+
+    const handleBooking = async () => {
+        const { startDate, endDate } = dateRange[0];
+
+        const bookingInfo = {
+            dateFrom: startDate.toISOString(),
+            dateTo: endDate.toISOString(),
+            guests: guests,
+            venueId: venueId,
+        };
+
+        console.log(bookingInfo);
+        try {
+            const res = await fetch(APIBookings, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "X-Noroff-API-Key": APIKEY,
+                },
+                body: JSON.stringify(bookingInfo),
+            });
+
+            if (!res.ok) throw new Error("Booking failed!");
+            console.log("Booking Successful!");
+        } catch (error) {
+            console.error("Error while submitting booking: ", error);
+        }
+    };
 
     useEffect(() => {
         if (!venueId) return;
@@ -67,10 +108,49 @@ function Venue() {
             <p>Breakfast: {venue.meta.breakfast ? "Yes" : "No"}</p>
             <p>Pets: {venue.meta.pets ? "Yes" : "No"}</p>
             <p>Parking: {venue.meta.parking ? "Yes" : "No"}</p>
+            <label className="block my-4">
+                Number of guests:
+                <input
+                    type="number"
+                    value={guests}
+                    min={1}
+                    max={venue.maxGuests}
+                    onChange={(e) => setGuests(Number(e.target.value))}
+                    className="border p-2 rounded w-full"
+                />
+            </label>
             <h2 className="text-xl font-bold mt-6 mb-2">Pick your date</h2>
+            <div className="flex justify-between px-4 text-sm font-semibold text-gray-600">
+                <span>Start Date</span>
+                <span>End Date</span>
+            </div>
             <DateRange
                 editableDateInputs={true}
-                onChange={(item) => setDateRange([item.selection])}
+                onChange={(item) => {
+                    const clickedElement = document.activeElement;
+
+                    if (leftCalendar.current?.contains(clickedElement)) {
+                        setDateRange([
+                            {
+                                ...dateRange[0],
+                                startDate: item.selection.startDate,
+                                endDate: dateRange[0].endDate,
+                            },
+                        ]);
+                    } else if (
+                        rightCalendar.current?.contains(clickedElement)
+                    ) {
+                        setDateRange([
+                            {
+                                ...dateRange[0],
+                                startDate: dateRange[0].startDate,
+                                endDate: item.selection.endDate,
+                            },
+                        ]);
+                    } else {
+                        setDateRange([item.selection]);
+                    }
+                }}
                 moveRangeOnFirstSelection={false}
                 ranges={dateRange}
                 disabledDates={disabledDates}
@@ -78,7 +158,13 @@ function Venue() {
                 direction="horizontal"
                 minDate={new Date()}
             />
-            {console.log(dateRange)}
+            <button
+                onClick={handleBooking}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+                Book Now
+            </button>
+
             <MapDisplay lat={venue.location.lat} lng={venue.location.lng} />
         </div>
     );
