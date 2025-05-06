@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { APIProfile } from "../assets/Constants";
 import { APIKEY } from "../assets/auth";
 import { checkLogin, isLoggedIn } from "../assets/components/functions";
+import { differenceInCalendarDays } from "date-fns";
 
 function Profile() {
     const profileId = localStorage.getItem("userName");
@@ -79,7 +80,7 @@ function Profile() {
         async function fetchBookings() {
             try {
                 const res = await fetch(
-                    `${APIProfile}/${profile.name}/bookings`,
+                    `${APIProfile}/${profile.name}/bookings?_venue=true`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem(
@@ -142,8 +143,8 @@ function Profile() {
                     ""
                 )}
             </div>
-            <div className="mt-8 w-full max-w-7xl flex">
-                <div>
+            <div className="mt-8 w-full max-w-7xl flex gap-8">
+                <div className="flex flex-col max-w-1/2">
                     <h2 className="text-xl font-semibold mb-4">My Venues</h2>
                     {venuesLoading ? (
                         <div>Loading venues...</div>
@@ -179,7 +180,7 @@ function Profile() {
                         <p>No venues found.</p>
                     )}
                 </div>
-                <div className="w-full">
+                <div className="flex flex-col max-w-1/2">
                     <h2 className="text-xl font-semibold mb-4">My Bookings</h2>
                     {bookingsLoading ? (
                         <div>Loading bookings...</div>
@@ -187,25 +188,44 @@ function Profile() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {bookings.map((booking) => (
                                 <Link
-                                    to={`/venue/${booking.id}`}
-                                    key={booking.id}
+                                    to={`/venue/${booking.venue.id}`}
+                                    key={booking.venue.id}
                                     className="border p-4 rounded"
                                 >
-                                    <img
-                                        src={
-                                            booking.media?.[0]?.url ||
-                                            "/placeholder.jpg"
-                                        }
-                                        className="h-40 w-full object-cover rounded"
-                                    />
                                     <h3 className="text-lg font-bold mt-2 truncate">
-                                        {booking.name}
+                                        {booking.venue.name}
                                     </h3>
                                     <p className="text-gray-600">
-                                        {booking.location?.city}
+                                        {booking.venue.location?.city}
                                     </p>
-                                    <p className="text-gray-800 font-semibold">
-                                        ${booking.price}
+                                    <p>Booked:</p>
+                                    <p>
+                                        {" "}
+                                        {new Date(
+                                            booking.dateFrom
+                                        ).toLocaleDateString("en-GB", {
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                        })}
+                                    </p>
+                                    <p>
+                                        {" "}
+                                        {new Date(
+                                            booking.dateTo
+                                        ).toLocaleDateString("en-GB", {
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                        })}{" "}
+                                    </p>
+                                    <p>
+                                        (
+                                        {differenceInCalendarDays(
+                                            new Date(booking.dateTo),
+                                            new Date(booking.dateFrom)
+                                        )}{" "}
+                                        nights)
                                     </p>
                                 </Link>
                             ))}
