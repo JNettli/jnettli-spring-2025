@@ -1,16 +1,17 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { APIBookings, APIVenues } from "../assets/Constants";
 import { MapDisplay } from "../assets/components/Map";
 import { DateRange } from "react-date-range";
 import { eachDayOfInterval } from "date-fns";
+import { APIKEY } from "../assets/auth";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { APIKEY } from "../assets/auth";
 
 function Venue() {
     const { venueId } = useParams();
     const [venue, setVenue] = useState(null);
+    const [isOwner, setIsOwner] = useState(false);
     const leftCalendar = useRef(null);
     const rightCalendar = useRef(null);
     const [dateRange, setDateRange] = useState([
@@ -75,15 +76,20 @@ function Venue() {
                     APIVenues + "/" + venueId + "?_owner=true&_bookings=true"
                 );
                 const data = await res.json();
-                console.log(data.data);
                 document.title = data.data.name + " | Holidaze";
                 setVenue(data.data);
                 setBookedDates(data.data.bookings);
+
+                const currentUsername = localStorage.getItem("userName");
+                if (data.data.owner.name === currentUsername) {
+                    setIsOwner(true);
+                } else {
+                    setIsOwner(false);
+                }
             } catch (error) {
                 console.error("Error fetching venue or bookings:", error);
             }
         }
-
         fetchVenue();
     }, [venueId]);
 
@@ -93,11 +99,11 @@ function Venue() {
 
     return (
         <div>
+            {isOwner ? <Link to={`/venues/edit/${venueId}`}>Here!</Link> : ""}
             <img src={venue.media[0].url} alt={venue.media[0].alt} />
             <h1>{venue.name}</h1>
             <p>{venue.description}</p>
             <p>Price per night: {venue.price}$</p>
-            <p>Rating: {venue.rating}⭐</p>
             <p>Currently booked: {venue._count.bookings}</p>
             <p>Address: {venue.location.address}</p>
             <p>City: {venue.location.city}</p>
