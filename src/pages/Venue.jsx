@@ -200,14 +200,10 @@ function Venue() {
                     min={1}
                     max={venue.maxGuests}
                     onChange={(e) => setGuests(Number(e.target.value))}
-                    className="border p-2 rounded w-full"
+                    className="border p-2 rounded ml-2 w-32"
                 />
             </label>
             <h2 className="text-xl font-bold mt-6 mb-2">Pick your date</h2>
-            <div className="flex justify-between px-4 text-sm font-semibold text-gray-600">
-                <span>Start Date</span>
-                <span>End Date</span>
-            </div>
             <DateRange
                 editableDateInputs={true}
                 onChange={(item) => {
@@ -238,8 +234,6 @@ function Venue() {
                 moveRangeOnFirstSelection={false}
                 ranges={dateRange}
                 disabledDates={disabledDates}
-                months={2}
-                direction="horizontal"
                 minDate={new Date()}
             />
             <button
@@ -296,7 +290,7 @@ function Venue() {
                                         })
                                     }
                                     required
-                                    className="border rounded p-1 ml-2"
+                                    className="border rounded p-1 w-full"
                                 />
                             </label>
                             <br />
@@ -316,7 +310,7 @@ function Venue() {
                                         })
                                     }
                                     required
-                                    className="border rounded p-1 ml-2"
+                                    className="border rounded p-1 w-full"
                                 />
                             </label>
                             <br />
@@ -333,7 +327,7 @@ function Venue() {
                                         })
                                     }
                                     required
-                                    className="border rounded p-1 ml-2"
+                                    className="border rounded p-1 w-full"
                                 />
                             </label>
                             <br />
