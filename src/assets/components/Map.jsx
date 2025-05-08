@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 const customMarkerIcon = new L.Icon({
-    iconUrl: "/img/location.svg",
+    iconUrl: "/src/assets/favicon/favicon.svg",
     iconSize: [40, 40],
     iconAnchor: [20, 40],
 });
