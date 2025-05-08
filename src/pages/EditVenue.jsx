@@ -228,6 +228,17 @@ function EditVenue() {
                     </div>
                 </label>
                 <label>
+                    Image URL
+                    <input
+                        type="number"
+                        name="rating"
+                        placeholder="Rating"
+                        value={formData.rating}
+                        onChange={handleChange}
+                        className="w-full border p-2 rounded"
+                    />
+                </label>
+                <label>
                     Max Guest Amount
                     <div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">

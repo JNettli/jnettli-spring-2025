@@ -181,6 +181,17 @@ function CreateVenue() {
                     />
                 </label>
                 <label>
+                    Rating
+                    <input
+                        type="number"
+                        name="rating"
+                        placeholder="Rating"
+                        value={formData.rating}
+                        onChange={handleChange}
+                        className="w-full border p-2 rounded"
+                    />
+                </label>
+                <label>
                     Price per night
                     <div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">

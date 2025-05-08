@@ -172,6 +172,7 @@ function Venue() {
             <h1 className="truncate">{venue.name}</h1>
             <p className="truncate">{venue.description}</p>
             <p>Price per night: {venue.price}$</p>
+            <p>Rating: {venue.rating}</p>
             <p>
                 Address:{" "}
                 {venue.location.address === "" ? "N/A" : venue.location.address}
@@ -244,110 +245,124 @@ function Venue() {
             </button>
 
             <p>Currently Booked: {venue._count.bookings}</p>
-            {userBookings.map((booking) => (
-                <div key={booking.id} className="border p-4 my-2 rounded w-42">
-                    <p>
-                        <strong>Your booking:</strong>
-                    </p>
-                    <p>
-                        From: {new Date(booking.dateFrom).toLocaleDateString()}{" "}
-                        <br />
-                        To: {new Date(booking.dateTo).toLocaleDateString()}{" "}
-                        <br />
-                        Guests: {booking.guests}
-                    </p>
-                    <button
-                        className="text-white mt-2 p-2 bg-blue-600 rounded w-full cursor-pointer"
-                        onClick={() => handleEditClick(booking)}
+            <div className="flex gap-2">
+                {userBookings.map((booking) => (
+                    <div
+                        key={booking.id}
+                        className="border p-4 my-2 rounded w-42"
                     >
-                        Edit Booking
-                    </button>
-                    <button
-                        className="text-white mt-2 p-2 bg-red-600 rounded w-full cursor-pointer"
-                        onClick={() => handleDeleteBooking(booking.id)}
-                    >
-                        Delete Booking
-                    </button>
-
-                    {editBookingId === booking.id && (
-                        <form
-                            onSubmit={handleUpdateBooking}
-                            className="mt-4 space-y-2"
+                        <p>
+                            <strong>Your booking:</strong>
+                        </p>
+                        <p>
+                            From:{" "}
+                            {new Date(booking.dateFrom).toLocaleDateString()}{" "}
+                            <br />
+                            To: {new Date(
+                                booking.dateTo
+                            ).toLocaleDateString()}{" "}
+                            <br />
+                            Guests: {booking.guests}
+                        </p>
+                        <button
+                            className="text-white mt-2 p-2 bg-blue-600 rounded w-full cursor-pointer"
+                            onClick={() => handleEditClick(booking)}
                         >
-                            <label>
-                                From:
-                                <input
-                                    type="date"
-                                    value={
-                                        editData.dateFrom
-                                            .toISOString()
-                                            .split("T")[0]
-                                    }
-                                    onChange={(e) =>
-                                        setEditData({
-                                            ...editData,
-                                            dateFrom: new Date(e.target.value),
-                                        })
-                                    }
-                                    required
-                                    className="border rounded p-1 w-full"
-                                />
-                            </label>
-                            <br />
-                            <label>
-                                To:
-                                <input
-                                    type="date"
-                                    value={
-                                        editData.dateTo
-                                            .toISOString()
-                                            .split("T")[0]
-                                    }
-                                    onChange={(e) =>
-                                        setEditData({
-                                            ...editData,
-                                            dateTo: new Date(e.target.value),
-                                        })
-                                    }
-                                    required
-                                    className="border rounded p-1 w-full"
-                                />
-                            </label>
-                            <br />
-                            <label>
-                                Guests:
-                                <input
-                                    type="number"
-                                    min="1"
-                                    value={editData.guests}
-                                    onChange={(e) =>
-                                        setEditData({
-                                            ...editData,
-                                            guests: parseInt(e.target.value),
-                                        })
-                                    }
-                                    required
-                                    className="border rounded p-1 w-full"
-                                />
-                            </label>
-                            <br />
-                            <button
-                                type="submit"
-                                className="bg-green-600 text-white px-3 py-1 rounded"
+                            Edit Booking
+                        </button>
+                        <button
+                            className="text-white mt-2 p-2 bg-red-600 rounded w-full cursor-pointer"
+                            onClick={() => handleDeleteBooking(booking.id)}
+                        >
+                            Delete Booking
+                        </button>
+
+                        {editBookingId === booking.id && (
+                            <form
+                                onSubmit={handleUpdateBooking}
+                                className="mt-4 space-y-2"
                             >
-                                Save
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setEditBookingId(null)}
-                                className="ml-2 text-red-500"
-                            >
-                                Cancel
-                            </button>
-                        </form>
-                    )}
-                </div>
-            ))}
+                                <label>
+                                    From:
+                                    <input
+                                        type="date"
+                                        value={
+                                            editData.dateFrom
+                                                .toISOString()
+                                                .split("T")[0]
+                                        }
+                                        onChange={(e) =>
+                                            setEditData({
+                                                ...editData,
+                                                dateFrom: new Date(
+                                                    e.target.value
+                                                ),
+                                            })
+                                        }
+                                        required
+                                        className="border rounded p-1 w-full"
+                                    />
+                                </label>
+                                <br />
+                                <label>
+                                    To:
+                                    <input
+                                        type="date"
+                                        value={
+                                            editData.dateTo
+                                                .toISOString()
+                                                .split("T")[0]
+                                        }
+                                        onChange={(e) =>
+                                            setEditData({
+                                                ...editData,
+                                                dateTo: new Date(
+                                                    e.target.value
+                                                ),
+                                            })
+                                        }
+                                        required
+                                        className="border rounded p-1 w-full"
+                                    />
+                                </label>
+                                <br />
+                                <label>
+                                    Guests:
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={editData.guests}
+                                        onChange={(e) =>
+                                            setEditData({
+                                                ...editData,
+                                                guests: parseInt(
+                                                    e.target.value
+                                                ),
+                                            })
+                                        }
+                                        required
+                                        className="border rounded p-1 w-full"
+                                    />
+                                </label>
+                                <br />
+                                <button
+                                    type="submit"
+                                    className="bg-green-600 text-white px-3 py-1 rounded"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setEditBookingId(null)}
+                                    className="ml-2 text-red-500"
+                                >
+                                    Cancel
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                ))}
+            </div>
 
             <MapDisplay lat={venue.location.lat} lng={venue.location.lng} />
         </div>
