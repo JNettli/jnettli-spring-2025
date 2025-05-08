@@ -88,7 +88,6 @@ function Venue() {
                 document.title = data.data.name + " | Holidaze";
                 setVenue(data.data);
                 setBookedDates(data.data.bookings);
-                console.log(data.data.bookings);
 
                 const currentUsername = localStorage.getItem("userName");
                 if (data.data.owner.name === currentUsername) {
@@ -156,7 +155,6 @@ function Venue() {
             if (!res.ok) throw new Error("Failed to delete booking");
 
             alert("Booking deleted!");
-            // Re-fetch or update state to reflect removal
             setBookedDates((prev) => prev.filter((b) => b.id !== bookingId));
         } catch (error) {
             console.error("Delete failed:", error);
@@ -253,10 +251,7 @@ function Venue() {
 
             <p>Currently Booked: {venue._count.bookings}</p>
             {userBookings.map((booking) => (
-                <div
-                    key={booking.id}
-                    className="border p-4 my-2 rounded bg-gray-50"
-                >
+                <div key={booking.id} className="border p-4 my-2 rounded w-42">
                     <p>
                         <strong>Your booking:</strong>
                     </p>
@@ -268,13 +263,13 @@ function Venue() {
                         Guests: {booking.guests}
                     </p>
                     <button
-                        className="text-blue-600 underline mt-2"
+                        className="text-white mt-2 p-2 bg-blue-600 rounded w-full cursor-pointer"
                         onClick={() => handleEditClick(booking)}
                     >
                         Edit Booking
                     </button>
                     <button
-                        className="text-white mt-2 ml-8 p-2 bg-red-600 rounded"
+                        className="text-white mt-2 p-2 bg-red-600 rounded w-full cursor-pointer"
                         onClick={() => handleDeleteBooking(booking.id)}
                     >
                         Delete Booking
