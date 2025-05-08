@@ -29,6 +29,15 @@ function Venue() {
         })
     );
     const [guests, setGuests] = useState(1);
+    const userBookings = bookedDates.filter(
+        (booking) => booking.customer?.name === localStorage.getItem("userName")
+    );
+    const [editBookingId, setEditBookingId] = useState(null);
+    const [editData, setEditData] = useState({
+        dateFrom: new Date(),
+        dateTo: new Date(),
+        guests: 1,
+    });
 
     useEffect(() => {
         const calendars = document.querySelectorAll(".rdrMonth");
@@ -79,6 +88,7 @@ function Venue() {
                 document.title = data.data.name + " | Holidaze";
                 setVenue(data.data);
                 setBookedDates(data.data.bookings);
+                console.log(data.data.bookings);
 
                 const currentUsername = localStorage.getItem("userName");
                 if (data.data.owner.name === currentUsername) {
@@ -93,6 +103,66 @@ function Venue() {
         fetchVenue();
     }, [venueId]);
 
+    function handleEditClick(booking) {
+        setEditBookingId(booking.id);
+        setEditData({
+            dateFrom: new Date(booking.dateFrom),
+            dateTo: new Date(booking.dateTo),
+            guests: booking.guests,
+        });
+    }
+
+    async function handleUpdateBooking(e) {
+        e.preventDefault();
+        try {
+            const res = await fetch(`${APIBookings}/${editBookingId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "X-Noroff-API-Key": APIKEY,
+                },
+                body: JSON.stringify({
+                    dateFrom: editData.dateFrom.toISOString(),
+                    dateTo: editData.dateTo.toISOString(),
+                    guests: editData.guests,
+                }),
+            });
+
+            if (!res.ok) throw new Error("Failed to update booking");
+
+            alert("Booking updated!");
+            setEditBookingId(null);
+        } catch (error) {
+            console.error("Update failed:", error);
+        }
+    }
+
+    async function handleDeleteBooking(bookingId) {
+        const confirmDelete = window.confirm(
+            "Are you sure you want to cancel this booking?"
+        );
+        if (!confirmDelete) return;
+
+        try {
+            const res = await fetch(`${APIBookings}/${bookingId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "X-Noroff-API-Key": APIKEY,
+                },
+            });
+
+            if (!res.ok) throw new Error("Failed to delete booking");
+
+            alert("Booking deleted!");
+            // Re-fetch or update state to reflect removal
+            setBookedDates((prev) => prev.filter((b) => b.id !== bookingId));
+        } catch (error) {
+            console.error("Delete failed:", error);
+        }
+    }
+
     if (!venueId) return <p>No venue ID provided.</p>;
 
     if (!venue) return <p>Loading venue...</p>;
@@ -101,14 +171,24 @@ function Venue() {
         <div>
             {isOwner ? <Link to={`/venues/edit/${venueId}`}>Here!</Link> : ""}
             <img src={venue.media[0].url} alt={venue.media[0].alt} />
-            <h1>{venue.name}</h1>
-            <p>{venue.description}</p>
+            <h1 className="truncate">{venue.name}</h1>
+            <p className="truncate">{venue.description}</p>
             <p>Price per night: {venue.price}$</p>
-            <p>Currently booked: {venue._count.bookings}</p>
-            <p>Address: {venue.location.address}</p>
-            <p>City: {venue.location.city}</p>
-            <p>Country: {venue.location.country}</p>
-            <p>Zip code: {venue.location.zip}</p>
+            <p>
+                Address:{" "}
+                {venue.location.address === "" ? "N/A" : venue.location.address}
+            </p>
+            <p>
+                City: {venue.location.city === "" ? "N/A" : venue.location.city}
+            </p>
+            <p>
+                Country:{" "}
+                {venue.location.country === "" ? "N/A" : venue.location.country}
+            </p>
+            <p>
+                Zip code:{" "}
+                {venue.location.zip === "" ? "N/A" : venue.location.zip}
+            </p>
             <p>Max Guests: {venue.maxGuests}</p>
             <p>Wifi: {venue.meta.wifi ? "Yes" : "No"}</p>
             <p>Breakfast: {venue.meta.breakfast ? "Yes" : "No"}</p>
@@ -170,6 +250,115 @@ function Venue() {
             >
                 Book Now
             </button>
+
+            <p>Currently Booked: {venue._count.bookings}</p>
+            {userBookings.map((booking) => (
+                <div
+                    key={booking.id}
+                    className="border p-4 my-2 rounded bg-gray-50"
+                >
+                    <p>
+                        <strong>Your booking:</strong>
+                    </p>
+                    <p>
+                        From: {new Date(booking.dateFrom).toLocaleDateString()}{" "}
+                        <br />
+                        To: {new Date(booking.dateTo).toLocaleDateString()}{" "}
+                        <br />
+                        Guests: {booking.guests}
+                    </p>
+                    <button
+                        className="text-blue-600 underline mt-2"
+                        onClick={() => handleEditClick(booking)}
+                    >
+                        Edit Booking
+                    </button>
+                    <button
+                        className="text-white mt-2 ml-8 p-2 bg-red-600 rounded"
+                        onClick={() => handleDeleteBooking(booking.id)}
+                    >
+                        Delete Booking
+                    </button>
+
+                    {editBookingId === booking.id && (
+                        <form
+                            onSubmit={handleUpdateBooking}
+                            className="mt-4 space-y-2"
+                        >
+                            <label>
+                                From:
+                                <input
+                                    type="date"
+                                    value={
+                                        editData.dateFrom
+                                            .toISOString()
+                                            .split("T")[0]
+                                    }
+                                    onChange={(e) =>
+                                        setEditData({
+                                            ...editData,
+                                            dateFrom: new Date(e.target.value),
+                                        })
+                                    }
+                                    required
+                                    className="border rounded p-1 ml-2"
+                                />
+                            </label>
+                            <br />
+                            <label>
+                                To:
+                                <input
+                                    type="date"
+                                    value={
+                                        editData.dateTo
+                                            .toISOString()
+                                            .split("T")[0]
+                                    }
+                                    onChange={(e) =>
+                                        setEditData({
+                                            ...editData,
+                                            dateTo: new Date(e.target.value),
+                                        })
+                                    }
+                                    required
+                                    className="border rounded p-1 ml-2"
+                                />
+                            </label>
+                            <br />
+                            <label>
+                                Guests:
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={editData.guests}
+                                    onChange={(e) =>
+                                        setEditData({
+                                            ...editData,
+                                            guests: parseInt(e.target.value),
+                                        })
+                                    }
+                                    required
+                                    className="border rounded p-1 ml-2"
+                                />
+                            </label>
+                            <br />
+                            <button
+                                type="submit"
+                                className="bg-green-600 text-white px-3 py-1 rounded"
+                            >
+                                Save
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setEditBookingId(null)}
+                                className="ml-2 text-red-500"
+                            >
+                                Cancel
+                            </button>
+                        </form>
+                    )}
+                </div>
+            ))}
 
             <MapDisplay lat={venue.location.lat} lng={venue.location.lng} />
         </div>
