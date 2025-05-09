@@ -62,18 +62,17 @@ export default function LoginModal() {
         if (isRegister) {
             try {
                 await register(userName, email, password, userType);
-                console.log(register);
-                console.log("Registered!");
             } catch (error) {
                 showError("Registration failed.", error);
             }
+            window.location.href = "/";
         } else {
             try {
                 await login(email, password);
-                console.log("Logged in!");
             } catch (error) {
                 showError("Login failed.", error);
             }
+            window.location.href = "/";
         }
     };
 
@@ -83,9 +82,23 @@ export default function LoginModal() {
         <>
             <button
                 onClick={() => (isAuth ? logout() : setIsOpen(true))}
-                className="bg-[#007A8D] text-white px-4 py-2 rounded-md hover:bg-[#006473] transition hover:cursor-pointer"
+                className="text-white px-4 py-2 rounded-md transition hover:cursor-pointer"
             >
-                {isAuth ? "Logout" : "Login"}
+                {isAuth ? (
+                    <img
+                        src="/img/logout.svg"
+                        alt="Logout"
+                        className="h-11 absolute top-3 right-15"
+                        title="Logout"
+                    />
+                ) : (
+                    <img
+                        src="/img/login.svg"
+                        alt="Login"
+                        className="h-11 absolute top-3 right-15"
+                        title="Login"
+                    />
+                )}
             </button>
 
             {isOpen && (

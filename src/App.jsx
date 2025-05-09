@@ -231,10 +231,10 @@ function App() {
             {scrollTop && (
                 <button
                     onClick={scrollToTop}
-                    className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-12 h-12 text-2xl bg-white outline-2 rounded-full hover:bg-gray-200 transition cursor-pointer"
+                    className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-12 h-12 text-3xl bg-white outline-[#007A8D] outline-2 rounded-full hover:bg-gray-200 transition cursor-pointer rotate-270"
                     aria-label="Back to top"
                 >
-                    ↑
+                    <p className="mt-0.5 text-[#007A8D]">&#x279C;</p>
                 </button>
             )}
         </>
