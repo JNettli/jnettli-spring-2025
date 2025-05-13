@@ -63,27 +63,16 @@ function Header() {
                 )}
                 <LoginModal />
             </header>
-            {isHome ? (
-                <div className="flex gap-4 px-4 pb-4">
-                    <Filter
-                        filters={pendingFilters}
-                        onFilterChange={setPendingFilters}
-                    />
-                    <button
-                        onClick={applyFilters}
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
-                    >
-                        Apply Filters
-                    </button>
-                    <button
-                        onClick={resetFilters}
-                        className="bg-gray-200 px-3 py-2 rounded"
-                    >
-                        Clear Filters
-                    </button>
-                </div>
-            ) : (
-                ""
+            {isHome && (
+                <Filter
+                    filters={pendingFilters}
+                    onFilterChange={setPendingFilters}
+                    onApply={applyFilters}
+                    onReset={() => {
+                        resetFilters();
+                        setPendingFilters({});
+                    }}
+                />
             )}
         </>
     );

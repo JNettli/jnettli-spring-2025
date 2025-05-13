@@ -127,8 +127,35 @@ function App() {
                     venue.meta.breakfast !== filters.breakfast
                 )
                     return false;
+                if (
+                    filters.minPrice !== undefined &&
+                    venue.price < filters.minPrice
+                )
+                    return false;
+                if (
+                    filters.maxPrice !== undefined &&
+                    venue.price > filters.maxPrice
+                )
+                    return false;
+                if (
+                    filters.maxGuests !== undefined &&
+                    venue.maxGuests > filters.maxGuests
+                )
+                    return false;
                 return true;
             });
+        }
+
+        if (filters.sort === "rating") {
+            filtered.sort((a, b) => b.rating - a.rating);
+        } else if (filters.sort === "created") {
+            filtered.sort((a, b) => new Date(b.created) - new Date(a.created));
+        } else if (filters.sort === "updated") {
+            filtered.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+        } else if (filters.sort === "popularity") {
+            filtered.sort(
+                (a, b) => (b._count?.bookings || 0) - (a._count?.bookings || 0)
+            );
         }
 
         const uniqueFiltered = Array.from(
