@@ -10,7 +10,15 @@ function App() {
 
     const { ref, inView } = useInView({ threshold: 0.5 });
 
-    const { venues, setVenues, isLoaded, setIsLoaded } = useVenueStore();
+    const {
+        venues,
+        setVenues,
+        isLoaded,
+        setIsLoaded,
+        searchQuery,
+        isSearchMode,
+        searchVenues,
+    } = useVenueStore();
     const [filteredVenues, setFilteredVenues] = useState([]);
     const [displayedVenues, setDisplayedVenues] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -144,6 +152,18 @@ function App() {
     useEffect(() => {
         applyFiltersToVenues();
     }, [filters, venues, applyFiltersToVenues]);
+
+    useEffect(() => {
+        if (isSearchMode && searchQuery) {
+            const results = searchVenues(searchQuery);
+            setFilteredVenues(results);
+            setDisplayedVenues(results.slice(0, limit));
+            setPage(1);
+            setHasMore(false);
+        } else {
+            applyFiltersToVenues();
+        }
+    }, [isSearchMode, searchQuery, venues, applyFiltersToVenues, searchVenues]);
 
     useEffect(() => {
         if (inView && hasMore && !loading) {
