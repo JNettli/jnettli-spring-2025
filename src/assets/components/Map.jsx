@@ -71,14 +71,7 @@ const MapPicker = ({ onLocationSelect }) => {
 };
 
 function MapDisplay({ lat, lng }) {
-    if (lat === null || lng === null) {
-        return (
-            <p>
-                There seems to be an issue with the provided map data. Ask the
-                venue manager for updated map details!
-            </p>
-        );
-    } else if (lat === 0 && lng === 0) {
+    if ((lat === 0 && lng === 0) || (lat === null && lng === null)) {
         lat = -50.605630278205524;
         lng = 165.9734630584717;
         return (

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { APIVenues } from "./assets/Constants";
 import Filter from "./assets/components/Filter";
@@ -18,21 +18,26 @@ function App() {
         searchQuery,
         isSearchMode,
         searchVenues,
+        setSearchQuery,
+        setIsSearchMode,
+        filters,
     } = useVenueStore();
     const [filteredVenues, setFilteredVenues] = useState([]);
     const [displayedVenues, setDisplayedVenues] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [filters, setFilters] = useState({
-        wifi: undefined,
-        parking: undefined,
-        pets: undefined,
-        breakfast: undefined,
-    });
-    const [pendingFilters, setPendingFilters] = useState(filters);
     const [page, setPage] = useState(1);
     const limit = 20;
     const [scrollTop, setScrollTop] = useState(false);
+    const [searchParams] = useSearchParams();
+    const urlQuery = searchParams.get("q");
+
+    useEffect(() => {
+        if (urlQuery) {
+            setSearchQuery(urlQuery);
+            setIsSearchMode(true);
+        }
+    }, [urlQuery, setSearchQuery, setIsSearchMode]);
 
     useEffect(() => {
         const onScroll = () => {
@@ -93,35 +98,53 @@ function App() {
     }, [venues, setVenues, isLoaded, setIsLoaded]);
 
     const applyFiltersToVenues = useCallback(() => {
-        setDisplayedVenues([]);
+        let filtered = venues;
 
-        const filtered = venues.filter((venue) => {
-            if (filters.wifi !== undefined && venue.meta.wifi !== filters.wifi)
-                return false;
-            if (
-                filters.parking !== undefined &&
-                venue.meta.parking !== filters.parking
-            )
-                return false;
-            if (filters.pets !== undefined && venue.meta.pets !== filters.pets)
-                return false;
-            if (
-                filters.breakfast !== undefined &&
-                venue.meta.breakfast !== filters.breakfast
-            )
-                return false;
-            return true;
-        });
+        if (isSearchMode && searchQuery.trim() !== "") {
+            const query = searchQuery.toLowerCase();
+            filtered = venues.filter((venue) =>
+                venue.name.toLowerCase().includes(query)
+            );
+        } else {
+            filtered = venues.filter((venue) => {
+                if (
+                    filters.wifi !== undefined &&
+                    venue.meta.wifi !== filters.wifi
+                )
+                    return false;
+                if (
+                    filters.parking !== undefined &&
+                    venue.meta.parking !== filters.parking
+                )
+                    return false;
+                if (
+                    filters.pets !== undefined &&
+                    venue.meta.pets !== filters.pets
+                )
+                    return false;
+                if (
+                    filters.breakfast !== undefined &&
+                    venue.meta.breakfast !== filters.breakfast
+                )
+                    return false;
+                return true;
+            });
+        }
 
         const uniqueFiltered = Array.from(
             new Map(filtered.map((v) => [v.id, v])).values()
         );
 
         setFilteredVenues(uniqueFiltered);
-        setDisplayedVenues(uniqueFiltered.slice(0, limit));
+        if (isSearchMode) {
+            setDisplayedVenues(filtered);
+            setHasMore(false);
+        } else {
+            setDisplayedVenues(filtered.slice(0, limit));
+            setHasMore(filtered.length > limit);
+        }
         setPage(1);
-        setHasMore(uniqueFiltered.length > limit);
-    }, [venues, filters]);
+    }, [venues, filters, isSearchMode, searchQuery]);
 
     const loadMoreVenues = useCallback(() => {
         const nextPage = page + 1;
@@ -159,7 +182,7 @@ function App() {
             setFilteredVenues(results);
             setDisplayedVenues(results.slice(0, limit));
             setPage(1);
-            setHasMore(false);
+            setHasMore(results.length > limit);
         } else {
             applyFiltersToVenues();
         }
@@ -171,40 +194,8 @@ function App() {
         }
     }, [inView, hasMore, loading, loadMoreVenues]);
 
-    const handleApplyFilters = () => setFilters(pendingFilters);
-
-    const handleClearFilters = () => {
-        const reset = {
-            wifi: undefined,
-            parking: undefined,
-            pets: undefined,
-            breakfast: undefined,
-        };
-        setFilters(reset);
-        setPendingFilters(reset);
-    };
-
     return (
         <>
-            <Filter
-                filters={pendingFilters}
-                onFilterChange={setPendingFilters}
-            />
-            <div className="flex gap-4 px-4 pb-4">
-                <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={handleApplyFilters}
-                >
-                    Apply Filters
-                </button>
-                <button
-                    className="bg-gray-200 px-3 py-2 rounded"
-                    onClick={handleClearFilters}
-                >
-                    Clear Filters
-                </button>
-            </div>
-
             <div className="max-w-7xl mx-auto p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {displayedVenues.map((venue) => (

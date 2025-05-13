@@ -175,18 +175,26 @@ function Venue() {
             <p>Rating: {venue.rating}</p>
             <p>
                 Address:{" "}
-                {venue.location.address === "" ? "N/A" : venue.location.address}
+                {venue.location.address === "" || null
+                    ? "N/A"
+                    : venue.location.address}
             </p>
+            {console.log(venue)}
             <p>
-                City: {venue.location.city === "" ? "N/A" : venue.location.city}
+                City:{" "}
+                {venue.location.city === "" || null
+                    ? "N/A"
+                    : venue.location.city}
             </p>
             <p>
                 Country:{" "}
-                {venue.location.country === "" ? "N/A" : venue.location.country}
+                {venue.location.country === "" || null
+                    ? "N/A"
+                    : venue.location.country}
             </p>
             <p>
                 Zip code:{" "}
-                {venue.location.zip === "" ? "N/A" : venue.location.zip}
+                {venue.location.zip === "" || null ? "N/A" : venue.location.zip}
             </p>
             <p>Max Guests: {venue.maxGuests}</p>
             <p>Wifi: {venue.meta.wifi ? "Yes" : "No"}</p>

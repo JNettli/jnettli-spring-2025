@@ -24,6 +24,39 @@ export const useVenueStore = create(
                         venue.description?.toLowerCase().includes(q)
                 );
             },
+            filters: {
+                wifi: undefined,
+                parking: undefined,
+                pets: undefined,
+                breakfast: undefined,
+            },
+            pendingFilters: {
+                wifi: undefined,
+                parking: undefined,
+                pets: undefined,
+                breakfast: undefined,
+            },
+            setFilters: (newFilters) => set({ filters: newFilters }),
+            setPendingFilters: (pending) => set({ pendingFilters: pending }),
+            resetFilters: () =>
+                set({
+                    filters: {
+                        wifi: undefined,
+                        parking: undefined,
+                        pets: undefined,
+                        breakfast: undefined,
+                    },
+                    pendingFilters: {
+                        wifi: undefined,
+                        parking: undefined,
+                        pets: undefined,
+                        breakfast: undefined,
+                    },
+                }),
+            applyFilters: () =>
+                set((state) => ({
+                    filters: { ...state.pendingFilters },
+                })),
         }),
         {
             name: "venue-storage",

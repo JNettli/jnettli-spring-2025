@@ -1,5 +1,5 @@
 import { useVenueStore } from "../useVenueStore";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
 export default function SearchBar() {
@@ -20,7 +20,10 @@ export default function SearchBar() {
         } else {
             setSearchQuery(input.trim());
             setIsSearchMode(true);
-            navigate("/");
+            navigate({
+                pathname: "/",
+                search: createSearchParams({ q: input.trim() }).toString(),
+            });
         }
         setShowDropdown(false);
     };
@@ -41,7 +44,7 @@ export default function SearchBar() {
         const lower = input.toLowerCase();
         const matches = venues
             .filter((v) => v.name.toLowerCase().includes(lower))
-            .slice(0, 10);
+            .slice(0, 20);
 
         setSuggestions(matches);
         setShowDropdown(matches.length > 0);
@@ -78,6 +81,8 @@ export default function SearchBar() {
             e.preventDefault();
             if (highlightIndex >= 0 && suggestions[highlightIndex]) {
                 handleSelectSuggestion(suggestions[highlightIndex].id);
+            } else {
+                handleSearch(e);
             }
         }
     };
@@ -109,10 +114,9 @@ export default function SearchBar() {
                     <div className="bg-white border border-slate-900/50 border-b-0 w-full h-14 -mt-12 rounded-t-3xl"></div>
                     <ul className="absolute top-full w-full max-h-80 overflow-y-auto bg-white border border-slate-900/50 border-t-0 rounded-b-xl shadow z-40">
                         {suggestions.map((venue, index) => (
-                            <>
-                                <div className="border-b-1 w-9/10 mx-auto border-slate-900/20"></div>
+                            <div key={venue.id}>
+                                <div className="border-t-1 w-9/10 mx-auto border-slate-900/20"></div>
                                 <li
-                                    key={venue.id}
                                     ref={(element) => {
                                         if (
                                             index === highlightIndex &&
@@ -127,10 +131,10 @@ export default function SearchBar() {
                                     onClick={() =>
                                         handleSelectSuggestion(venue.id)
                                     }
-                                    className={`py-2 px-4 cursor-pointer ${
+                                    className={`py-2 px-4 cursor-pointer overflow-x-hidden ${
                                         index === highlightIndex
                                             ? "bg-[#088D9A] text-white"
-                                            : "hover:bg-gray-100"
+                                            : "hover:bg-[#088D9A] hover:text-white"
                                     }`}
                                 >
                                     <div className="flex justify-between">
@@ -140,7 +144,9 @@ export default function SearchBar() {
                                             </span>
                                             <span className="text-sm font-semibold text-slate-900/50">
                                                 {venue.location?.country || ""}
-                                                {venue.location?.country !== ""
+                                                {venue.location?.country !==
+                                                    null &&
+                                                venue.location?.country !== ""
                                                     ? ", "
                                                     : "No location set"}
                                                 {venue.location?.city || ""}
@@ -155,11 +161,11 @@ export default function SearchBar() {
                                                 venue.media?.[0]?.alt ||
                                                 "Venue preview"
                                             }
-                                            className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                                            className="w-16 h-16 object-cover rounded-md"
                                         />
                                     </div>
                                 </li>
-                            </>
+                            </div>
                         ))}
                     </ul>
                 </>
