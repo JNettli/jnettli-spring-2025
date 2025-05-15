@@ -98,7 +98,7 @@ function App() {
     }, [venues, setVenues, isLoaded, setIsLoaded]);
 
     const applyFiltersToVenues = useCallback(() => {
-        let filtered = venues;
+        let filtered = [...venues];
 
         if (isSearchMode && searchQuery.trim() !== "") {
             const query = searchQuery.toLowerCase();
@@ -146,13 +146,13 @@ function App() {
             });
         }
 
-        if (filters.sort === "rating") {
+        if (filters.sortBy === "rating") {
             filtered.sort((a, b) => b.rating - a.rating);
-        } else if (filters.sort === "created") {
+        } else if (filters.sortBy === "created") {
             filtered.sort((a, b) => new Date(b.created) - new Date(a.created));
-        } else if (filters.sort === "updated") {
+        } else if (filters.sortBy === "updated") {
             filtered.sort((a, b) => new Date(b.updated) - new Date(a.updated));
-        } else if (filters.sort === "popularity") {
+        } else if (filters.sortBy === "popularity") {
             filtered.sort(
                 (a, b) => (b._count?.bookings || 0) - (a._count?.bookings || 0)
             );
