@@ -3,12 +3,6 @@ import FilterSliders from "./RangeSliders";
 
 const FILTER_OPTIONS = ["wifi", "parking", "pets", "breakfast"];
 
-const getNextState = (current) => {
-    if (current === true) return false;
-    if (current === false) return undefined;
-    return true;
-};
-
 const neutralCheck = (
     <img src="/img/neutral.svg" alt="neutral check" className="w-5 h-5" />
 );
@@ -25,8 +19,13 @@ const getLabel = (value) => {
     return neutralCheck;
 };
 
+const getNextState = (current) => {
+    if (current === true) return false;
+    if (current === false) return undefined;
+    return true;
+};
+
 export default function Filter({ filters, onFilterChange, onApply, onReset }) {
-    const [localFilters, setLocalFilters] = useState(filters);
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleFilters = () => {
@@ -34,9 +33,8 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
     };
 
     const handleToggle = (key) => {
-        const nextValue = getNextState(localFilters[key]);
-        const updated = { ...localFilters, [key]: nextValue };
-        setLocalFilters(updated);
+        const nextValue = getNextState(filters[key]);
+        const updated = { ...filters, [key]: nextValue };
         onFilterChange(updated);
     };
 
@@ -48,10 +46,20 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                 }`}
             >
                 <div className="p-4 flex flex-col justify-center gap-4 max-w-5xl mx-auto">
+                    <div>
+                        <h2 className="font-semibold mb-2">Guests & Price</h2>
+                        <div className="flex flex-col">
+                            <FilterSliders
+                                filters={filters}
+                                onFilterChange={onFilterChange}
+                            />
+                        </div>
+                    </div>
+                    <div className="border-b-slate-900/20 border-b w-9/10 mx-auto mt-8"></div>
                     <div className="flex justify-around">
                         <div>
                             <h2 className="font-semibold mb-2">Amenities</h2>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-wrap">
                                 {FILTER_OPTIONS.map((key) => (
                                     <button
                                         key={key}
@@ -76,7 +84,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                                         sortBy: e.target.value || undefined,
                                     })
                                 }
-                                className="border p-2 rounded w-full"
+                                className="border p-2 rounded w-full border-[#088D9A] focus:outline-[#088D9A]"
                             >
                                 <option value="">Choose Option</option>
                                 <option value="rating">Rating</option>
@@ -84,16 +92,6 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                                 <option value="updated">Updated Date</option>
                                 <option value="popularity">Popularity</option>
                             </select>
-                        </div>
-                    </div>
-                    <div className="border-b-slate-900/20 border-b w-9/10 mx-auto mt-8"></div>
-                    <div>
-                        <h2 className="font-semibold mb-2">Guests & Price</h2>
-                        <div className="flex flex-col">
-                            <FilterSliders
-                                filters={filters}
-                                onFilterChange={onFilterChange}
-                            />
                         </div>
                     </div>
                 </div>

@@ -99,7 +99,7 @@ export default function SearchBar() {
                     placeholder="Search venues..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="border border-slate-900/50 rounded-tl-4xl rounded-bl-4xl pl-4 py-1 ml-2 w-full"
+                    className="border border-slate-900/50 rounded-tl-4xl rounded-bl-4xl pl-4 py-1 ml-2 w-full focus:outline-none focus:border-[#088D9A]"
                 />
                 <button type="submit" className="mr-2">
                     <img

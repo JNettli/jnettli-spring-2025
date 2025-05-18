@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { APIVenues } from "./assets/Constants";
-import Filter from "./assets/components/Filter";
 import { useVenueStore } from "./assets/useVenueStore";
 
 function App() {
@@ -77,7 +76,7 @@ function App() {
         try {
             while (true) {
                 const res = await fetch(
-                    `${APIVenues}?_owner=true&_bookings=true&limit=${limit}&page=${currentPage}&sort=rating`
+                    `${APIVenues}?limit=${limit}&page=${currentPage}&sort=rating`
                 );
                 const data = await res.json();
                 const newData = data.data;
@@ -238,6 +237,9 @@ function App() {
                                     }
                                     alt={venue.media[0]?.alt || "Missing alt"}
                                     className="w-full h-40 object-cover rounded"
+                                    onError={(e) =>
+                                        (e.target.src = "img/error-image.svg")
+                                    }
                                 />
                             </Link>
                             <Link
