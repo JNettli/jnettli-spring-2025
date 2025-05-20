@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { APIBookings, APIVenues } from "../assets/Constants";
 import { MapDisplay } from "../assets/components/Map";
@@ -14,6 +14,8 @@ function Venue() {
     const [isOwner, setIsOwner] = useState(false);
     const leftCalendar = useRef(null);
     const rightCalendar = useRef(null);
+    const dialogRef = useRef(null);
+
     const [dateRange, setDateRange] = useState([
         {
             startDate: new Date(),
@@ -22,6 +24,7 @@ function Venue() {
         },
     ]);
     const [bookedDates, setBookedDates] = useState([]);
+    const [checkoutData, setCheckoutData] = useState(null);
     const disabledDates = bookedDates.flatMap((booking) =>
         eachDayOfInterval({
             start: new Date(booking.dateFrom),
@@ -38,6 +41,7 @@ function Venue() {
         dateTo: new Date(),
         guests: 1,
     });
+    const navigate = useNavigate();
 
     useEffect(() => {
         const calendars = document.querySelectorAll(".rdrMonth");
@@ -47,38 +51,21 @@ function Venue() {
         }
     }, [venue]);
 
-    const handleBooking = async () => {
+    const handleBooking = () => {
         const { startDate, endDate } = dateRange[0];
-
         const bookingInfo = {
             dateFrom: startDate.toISOString(),
             dateTo: endDate.toISOString(),
             guests: guests,
             venueId: venueId,
+            price: venue.price,
         };
-
-        console.log(bookingInfo);
-        try {
-            const res = await fetch(APIBookings, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    "X-Noroff-API-Key": APIKEY,
-                },
-                body: JSON.stringify(bookingInfo),
-            });
-
-            if (!res.ok) throw new Error("Booking failed!");
-            console.log("Booking Successful!");
-        } catch (error) {
-            console.error("Error while submitting booking: ", error);
-        }
+        setCheckoutData(bookingInfo);
+        dialogRef.current?.showModal();
     };
 
     useEffect(() => {
         if (!venueId) return;
-
         async function fetchVenue() {
             try {
                 const res = await fetch(
@@ -90,11 +77,7 @@ function Venue() {
                 setBookedDates(data.data.bookings);
 
                 const currentUsername = localStorage.getItem("userName");
-                if (data.data.owner.name === currentUsername) {
-                    setIsOwner(true);
-                } else {
-                    setIsOwner(false);
-                }
+                setIsOwner(data.data.owner.name === currentUsername);
             } catch (error) {
                 console.error("Error fetching venue or bookings:", error);
             }
@@ -129,7 +112,6 @@ function Venue() {
             });
 
             if (!res.ok) throw new Error("Failed to update booking");
-
             alert("Booking updated!");
             setEditBookingId(null);
         } catch (error) {
@@ -162,45 +144,26 @@ function Venue() {
     }
 
     if (!venueId) return <p>No venue ID provided.</p>;
-
     if (!venue) return <p>Loading venue...</p>;
 
     return (
         <div>
-            {isOwner ? <Link to={`/venues/edit/${venueId}`}>Here!</Link> : ""}
+            {isOwner && <Link to={`/venues/edit/${venueId}`}>Here!</Link>}
             <img src={venue.media[0].url} alt={venue.media[0].alt} />
             <h1 className="truncate">{venue.name}</h1>
             <p className="truncate">{venue.description}</p>
             <p>Price per night: {venue.price}$</p>
             <p>Rating: {venue.rating}</p>
-            <p>
-                Address:{" "}
-                {venue.location.address === "" || null
-                    ? "N/A"
-                    : venue.location.address}
-            </p>
-            {console.log(venue)}
-            <p>
-                City:{" "}
-                {venue.location.city === "" || null
-                    ? "N/A"
-                    : venue.location.city}
-            </p>
-            <p>
-                Country:{" "}
-                {venue.location.country === "" || null
-                    ? "N/A"
-                    : venue.location.country}
-            </p>
-            <p>
-                Zip code:{" "}
-                {venue.location.zip === "" || null ? "N/A" : venue.location.zip}
-            </p>
+            <p>Address: {venue.location.address || "N/A"}</p>
+            <p>City: {venue.location.city || "N/A"}</p>
+            <p>Country: {venue.location.country || "N/A"}</p>
+            <p>Zip code: {venue.location.zip || "N/A"}</p>
             <p>Max Guests: {venue.maxGuests}</p>
             <p>Wifi: {venue.meta.wifi ? "Yes" : "No"}</p>
             <p>Breakfast: {venue.meta.breakfast ? "Yes" : "No"}</p>
             <p>Pets: {venue.meta.pets ? "Yes" : "No"}</p>
             <p>Parking: {venue.meta.parking ? "Yes" : "No"}</p>
+
             <label className="block my-4">
                 Number of guests:
                 <input
@@ -212,18 +175,17 @@ function Venue() {
                     className="border p-2 rounded ml-2 w-32"
                 />
             </label>
+
             <h2 className="text-xl font-bold mt-6 mb-2">Pick your date</h2>
             <DateRange
                 editableDateInputs={true}
                 onChange={(item) => {
                     const clickedElement = document.activeElement;
-
                     if (leftCalendar.current?.contains(clickedElement)) {
                         setDateRange([
                             {
                                 ...dateRange[0],
                                 startDate: item.selection.startDate,
-                                endDate: dateRange[0].endDate,
                             },
                         ]);
                     } else if (
@@ -232,7 +194,6 @@ function Venue() {
                         setDateRange([
                             {
                                 ...dateRange[0],
-                                startDate: dateRange[0].startDate,
                                 endDate: item.selection.endDate,
                             },
                         ]);
@@ -245,6 +206,7 @@ function Venue() {
                 disabledDates={disabledDates}
                 minDate={new Date()}
             />
+
             <button
                 onClick={handleBooking}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -252,7 +214,104 @@ function Venue() {
                 Book Now
             </button>
 
+            <dialog
+                ref={dialogRef}
+                className="rounded p-6 w-96 max-w-md shadow-xl border transform duration-300"
+            >
+                <h2 className="text-xl font-bold mb-4">Confirm Your Booking</h2>
+                {checkoutData && (
+                    <div className="space-y-2 text-sm text-gray-700 flex flex-col">
+                        <p className="flex justify-between">
+                            <strong>From:</strong>{" "}
+                            {new Date(
+                                checkoutData.dateFrom
+                            ).toLocaleDateString()}
+                        </p>
+                        <p className="flex justify-between">
+                            <strong>To:</strong>{" "}
+                            {new Date(checkoutData.dateTo).toLocaleDateString()}
+                        </p>
+                        <p className="flex justify-between">
+                            <strong>Total Nights:</strong>{" "}
+                            {(new Date(checkoutData.dateTo) -
+                                new Date(checkoutData.dateFrom)) /
+                                (1000 * 60 * 60 * 24) +
+                                1}
+                        </p>
+                        <p className="flex justify-between">
+                            <strong>Price per Night:</strong> $
+                            {checkoutData.price}
+                        </p>
+                        <p className="flex justify-between">
+                            <strong>Guests:</strong> {checkoutData.guests}
+                        </p>
+                        <div className="border-b border-slate-900/50"></div>
+                        <p className="flex justify-between">
+                            <strong>Total Price: </strong>
+                            <strong>
+                                $
+                                {((new Date(checkoutData.dateTo) -
+                                    new Date(checkoutData.dateFrom)) /
+                                    (1000 * 60 * 60 * 24) +
+                                    1) *
+                                    checkoutData.price}
+                            </strong>
+                        </p>
+                    </div>
+                )}
+                <div className="mt-6 flex justify-end gap-4">
+                    <button
+                        onClick={() => {
+                            dialogRef.current.close();
+                            setCheckoutData(null);
+                        }}
+                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={async () => {
+                            try {
+                                const res = await fetch(APIBookings, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        Authorization: `Bearer ${localStorage.getItem(
+                                            "token"
+                                        )}`,
+                                        "X-Noroff-API-Key": APIKEY,
+                                    },
+                                    body: JSON.stringify(checkoutData),
+                                });
+                                if (!res.ok) throw new Error("Booking failed!");
+                                dialogRef.current.close();
+                                setCheckoutData(null);
+                                navigate("/success", {
+                                    state: {
+                                        venue: venue.name,
+                                        dateFrom: checkoutData.dateFrom,
+                                        dateTo: checkoutData.dateTo,
+                                        guests: checkoutData.guests,
+                                        price: checkoutData.price,
+                                    },
+                                });
+                            } catch (error) {
+                                console.error(
+                                    "Error while submitting booking: ",
+                                    error
+                                );
+                                alert("Booking failed. Try again.");
+                            }
+                        }}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Confirm Booking
+                    </button>
+                </div>
+            </dialog>
+
             <p>Currently Booked: {venue._count.bookings}</p>
+
             <div className="flex gap-2">
                 {userBookings.map((booking) => (
                     <div
@@ -311,7 +370,6 @@ function Venue() {
                                         className="border rounded p-1 w-full"
                                     />
                                 </label>
-                                <br />
                                 <label>
                                     To:
                                     <input
@@ -333,7 +391,6 @@ function Venue() {
                                         className="border rounded p-1 w-full"
                                     />
                                 </label>
-                                <br />
                                 <label>
                                     Guests:
                                     <input
@@ -352,7 +409,6 @@ function Venue() {
                                         className="border rounded p-1 w-full"
                                     />
                                 </label>
-                                <br />
                                 <button
                                     type="submit"
                                     className="bg-green-600 text-white px-3 py-1 rounded"
