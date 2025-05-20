@@ -1,8 +1,14 @@
 import { useVenueStore } from "../useVenueStore";
 import { createSearchParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import {
+    useState,
+    useEffect,
+    useRef,
+    forwardRef,
+    useImperativeHandle,
+} from "react";
 
-export default function SearchBar() {
+const SearchBar = forwardRef((_, externalRef) => {
     const [input, setInput] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -10,7 +16,13 @@ export default function SearchBar() {
 
     const { venues, setSearchQuery, setIsSearchMode } = useVenueStore();
     const navigate = useNavigate();
+
+    const wrapperRef = useRef();
     const inputRef = useRef();
+
+    useImperativeHandle(externalRef, () => ({
+        focus: () => inputRef.current?.focus(),
+    }));
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -53,7 +65,7 @@ export default function SearchBar() {
 
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (inputRef.current && !inputRef.current.contains(e.target)) {
+            if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
                 setShowDropdown(false);
             }
         };
@@ -88,10 +100,7 @@ export default function SearchBar() {
     };
 
     return (
-        <div
-            className="relative w-full md:max-w-md max-w-xs mx-auto"
-            ref={inputRef}
-        >
+        <div className="w-full md:max-w-md max-w-xs mx-auto" ref={wrapperRef}>
             <form
                 onSubmit={handleSearch}
                 onKeyDown={handleKeyDown}
@@ -99,6 +108,7 @@ export default function SearchBar() {
             >
                 <input
                     type="text"
+                    ref={inputRef}
                     placeholder="Search venues..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
@@ -108,7 +118,7 @@ export default function SearchBar() {
                     <img
                         src="/img/search.svg"
                         alt="Search Icon"
-                        className="bg-[#088D9A] p-2 h-10 w-14 rounded-tr-4xl rounded-br-4xl cursor-pointer hover:bg-blue-600 transition duration-150"
+                        className="bg-[#088D9A] p-2 h-10 w-14 rounded-tr-4xl rounded-br-4xl cursor-pointer hover:bg-[#066B7A] transition duration-150"
                     />
                 </button>
             </form>
@@ -118,7 +128,7 @@ export default function SearchBar() {
                     <ul className="absolute top-full w-full max-h-80 overflow-y-auto bg-white border border-slate-900/50 border-t-0 rounded-b-xl shadow z-40">
                         {suggestions.map((venue, index) => (
                             <div key={venue.id}>
-                                <div className="border-t-1 w-9/10 mx-auto border-slate-900/20"></div>
+                                <div className="border-t w-9/10 mx-auto border-slate-900/20"></div>
                                 <li
                                     ref={(element) => {
                                         if (
@@ -147,9 +157,7 @@ export default function SearchBar() {
                                             </span>
                                             <span className="text-sm font-semibold text-slate-900/50">
                                                 {venue.location?.country || ""}
-                                                {venue.location?.country !==
-                                                    null &&
-                                                venue.location?.country !== ""
+                                                {venue.location?.country
                                                     ? ", "
                                                     : "No location set"}
                                                 {venue.location?.city || ""}
@@ -175,4 +183,6 @@ export default function SearchBar() {
             )}
         </div>
     );
-}
+});
+
+export default SearchBar;

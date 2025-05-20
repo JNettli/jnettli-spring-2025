@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useVenueStore } from "../useVenueStore";
 import { isLoggedIn } from "./functions";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LoginModal from "./LoginModal";
 import SearchBar from "./Search";
 import Filter from "./Filter";
@@ -28,10 +28,18 @@ function Header() {
         resetFilters();
     };
 
+    const searchInputRef = useRef(null);
+
+    useEffect(() => {
+        if (mobileSearch && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [mobileSearch]);
+
     return (
         <>
             <header className="flex justify-between items-center px-6 md:px-16 py-5 border-b border-b-slate-900/50 relative">
-                <div className="flex">
+                <div className="flex z-1">
                     <Link
                         to="/"
                         onClick={handleReset}
@@ -52,13 +60,23 @@ function Header() {
                         onClick={() => setMobileSearch((prev) => !prev)}
                     >
                         <img
-                            src="/img/search.svg"
-                            className="h-10 w-10 bg-[#088D9A] py-2 rounded-4xl hover:cursor-pointer"
-                            title="Search for venues!"
+                            src={
+                                mobileSearch
+                                    ? "/img/negative.svg"
+                                    : "/img/search.svg"
+                            }
+                            className={`h-10 w-10 rounded-4xl hover:cursor-pointer ${
+                                mobileSearch ? "bg-white" : "py-2 bg-[#088D9A]"
+                            }`}
+                            title={
+                                mobileSearch
+                                    ? "Remove searchbar"
+                                    : "Search for venues!"
+                            }
                         />
                     </button>
                 </div>
-                <div className="flex gap-8">
+                <div className="flex gap-8 z-1">
                     {loggedIn && (
                         <Link to={profileId}>
                             <img
@@ -75,9 +93,9 @@ function Header() {
                         </Link>
                     )}
                     <LoginModal />
-                    <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-6 w-[300px]">
-                        <SearchBar />
-                    </div>
+                </div>
+                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-6 xl:w-7xl lg:w-6xl">
+                    <SearchBar />
                 </div>
             </header>
             <div

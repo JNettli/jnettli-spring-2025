@@ -114,7 +114,7 @@ function Profile() {
 
     return (
         <div className="flex flex-col justify-center">
-            <div className="bg-white max-w-7xl min-w-5xl">
+            <div className="bg-white max-w-7xl min-w-fit">
                 <p className="text-lg">Profile Page</p>
                 <img src={profile.banner.url} alt={profile.banner.alt} />
                 <img

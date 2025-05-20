@@ -5,7 +5,6 @@ import { Layout } from "./assets/Layout";
 import {
     App,
     Venue,
-    Checkout,
     Profile,
     CreateVenue,
     EditProfile,
