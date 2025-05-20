@@ -41,11 +41,13 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
     return (
         <>
             <div
-                className={`transition-all duration-300 overflow-hidden ${
-                    isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+                className={`transition-all duration-700 overflow-hidden ${
+                    isOpen
+                        ? "lg:max-h-[450px] max-h-[670px] opacity-100"
+                        : "max-h-0 opacity-0"
                 }`}
             >
-                <div className="p-4 flex flex-col justify-center gap-4 max-w-5xl mx-auto">
+                <div className="p-4 flex flex-col justify-center gap-4 lg:max-w-5xl max-w-md mx-auto">
                     <div>
                         <h2 className="font-semibold mb-2">Guests & Price</h2>
                         <div className="flex flex-col">
@@ -56,15 +58,15 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                         </div>
                     </div>
                     <div className="border-b-slate-900/20 border-b w-9/10 mx-auto mt-8"></div>
-                    <div className="flex justify-around">
+                    <div className="flex lg:flex-row lg:mx-0 flex-col w-full justify-around mx-auto">
                         <div>
                             <h2 className="font-semibold mb-2">Amenities</h2>
-                            <div className="flex gap-2 flex-wrap">
+                            <div className="flex lg:flex-row flex-col gap-2">
                                 {FILTER_OPTIONS.map((key) => (
                                     <button
                                         key={key}
                                         onClick={() => handleToggle(key)}
-                                        className="flex items-center gap-2 border border-gray-300 rounded px-3 py-2 hover:bg-gray-100 transition"
+                                        className="flex justify-between items-center gap-2 border border-gray-300 rounded px-3 py-2 hover:bg-gray-100 transition cursor-pointer"
                                     >
                                         <span className="capitalize">
                                             {key}
@@ -74,7 +76,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                                 ))}
                             </div>
                         </div>
-                        <div className="flex flex-col w-1/2">
+                        <div className="flex flex-col lg:w-1/2 w-full">
                             <h2 className="font-semibold mb-2">Sort By</h2>
                             <select
                                 value={filters.sortBy || ""}

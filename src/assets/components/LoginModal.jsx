@@ -82,20 +82,20 @@ export default function LoginModal() {
         <>
             <button
                 onClick={() => (isAuth ? logout() : setIsOpen(true))}
-                className="text-white px-4 py-2 rounded-md transition hover:cursor-pointer"
+                className="transition hover:cursor-pointer"
             >
                 {isAuth ? (
                     <img
                         src="/img/logout.svg"
                         alt="Logout"
-                        className="h-11 absolute top-3 right-15"
+                        className="h-11"
                         title="Logout"
                     />
                 ) : (
                     <img
                         src="/img/login.svg"
                         alt="Login"
-                        className="h-11 absolute top-3 right-15"
+                        className="h-11"
                         title="Login"
                     />
                 )}

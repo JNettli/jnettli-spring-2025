@@ -88,7 +88,10 @@ export default function SearchBar() {
     };
 
     return (
-        <div className="relative w-full max-w-md mx-auto" ref={inputRef}>
+        <div
+            className="relative w-full md:max-w-md max-w-xs mx-auto"
+            ref={inputRef}
+        >
             <form
                 onSubmit={handleSearch}
                 onKeyDown={handleKeyDown}
@@ -105,7 +108,7 @@ export default function SearchBar() {
                     <img
                         src="/img/search.svg"
                         alt="Search Icon"
-                        className="bg-[#088D9A] p-2 h-10 w-14 rounded-tr-4xl rounded-br-4xl cursor-pointer"
+                        className="bg-[#088D9A] p-2 h-10 w-14 rounded-tr-4xl rounded-br-4xl cursor-pointer hover:bg-blue-600 transition duration-150"
                     />
                 </button>
             </form>
