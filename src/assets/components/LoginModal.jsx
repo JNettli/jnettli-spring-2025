@@ -88,14 +88,14 @@ export default function LoginModal() {
                     <img
                         src="/img/logout.svg"
                         alt="Logout"
-                        className="h-11"
+                        className="h-11 w-11"
                         title="Logout"
                     />
                 ) : (
                     <img
                         src="/img/login.svg"
                         alt="Login"
-                        className="h-11"
+                        className="h-11 w-11"
                         title="Login"
                     />
                 )}

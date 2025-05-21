@@ -100,11 +100,11 @@ const SearchBar = forwardRef((_, externalRef) => {
     };
 
     return (
-        <div className="w-full md:max-w-md max-w-xs mx-auto" ref={wrapperRef}>
+        <div className="w-full relative" ref={wrapperRef}>
             <form
                 onSubmit={handleSearch}
                 onKeyDown={handleKeyDown}
-                className="flex justify-between z-50"
+                className="flex justify-between"
             >
                 <input
                     type="text"
@@ -124,8 +124,8 @@ const SearchBar = forwardRef((_, externalRef) => {
             </form>
             {showDropdown && (
                 <>
-                    <div className="bg-white border border-slate-900/50 border-b-0 w-full h-14 -mt-12 rounded-t-3xl"></div>
-                    <ul className="absolute top-full w-full max-h-80 overflow-y-auto bg-white border border-slate-900/50 border-t-0 rounded-b-xl shadow z-40">
+                    <div className="bg-white border border-slate-900/50 border-b-0 w-full h-14 -mt-12 -mb-2 rounded-t-3xl"></div>
+                    <ul className="absolute left-0 right-0 top-full w-full max-h-80 overflow-y-auto bg-white border border-slate-900/50 border-t-0 rounded-b-xl shadow z-[101]">
                         {suggestions.map((venue, index) => (
                             <div key={venue.id}>
                                 <div className="border-t w-9/10 mx-auto border-slate-900/20"></div>

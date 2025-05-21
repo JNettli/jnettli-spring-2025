@@ -21,14 +21,16 @@ function App() {
         setIsSearchMode,
         filters,
     } = useVenueStore();
+
     const [filteredVenues, setFilteredVenues] = useState([]);
     const [displayedVenues, setDisplayedVenues] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);
-    const limit = 20;
     const [scrollTop, setScrollTop] = useState(false);
     const [searchParams] = useSearchParams();
+    const limit = 20;
+
     const urlQuery = searchParams.get("q");
 
     useEffect(() => {
@@ -220,21 +222,27 @@ function App() {
         }
     }, [inView, hasMore, loading, loadMoreVenues]);
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if (document.visibilityState === "visible") {
+                console.log("Auto-refreshing venue data...");
+                fetchInitialVenues();
+                fetchRemainingVenues();
+            }
+        }, 120000);
+
+        return () => clearInterval(intervalId);
+    }, [fetchInitialVenues, fetchRemainingVenues]);
+
     return (
         <>
             <div className="max-w-7xl mx-auto p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {displayedVenues.map((venue) => (
-                        <div
-                            key={venue.id}
-                            className="bg-red-400 rounded-lg p-4"
-                        >
+                        <div key={venue.id} className="bg-red-400 rounded-lg p-4">
                             <Link to={`/venue/${venue.id}`}>
                                 <img
-                                    src={
-                                        venue.media[0]?.url ||
-                                        "img/error-image.svg"
-                                    }
+                                    src={venue.media[0]?.url || "img/error-image.svg"}
                                     alt={venue.media[0]?.alt || "Missing alt"}
                                     className="w-full h-40 object-cover rounded"
                                     onError={(e) =>
@@ -242,10 +250,7 @@ function App() {
                                     }
                                 />
                             </Link>
-                            <Link
-                                to={`/venue/${venue.id}`}
-                                className="font-bold text-white"
-                            >
+                            <Link to={`/venue/${venue.id}`} className="font-bold text-white">
                                 {venue.name}
                             </Link>
                         </div>
@@ -254,9 +259,7 @@ function App() {
 
                 <div ref={ref} className="h-16"></div>
 
-                {loading && (
-                    <p className="text-center mt-4">Loading venues...</p>
-                )}
+                {loading && <p className="text-center mt-4">Loading venues...</p>}
                 {!loading && !hasMore && displayedVenues.length === 0 && (
                     <p className="text-center text-gray-500 mt-4">
                         No venues match your filters.

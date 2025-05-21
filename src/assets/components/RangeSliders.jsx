@@ -8,7 +8,7 @@ const SLIDER_COLORS = {
 };
 
 const THUMB_STYLE =
-    "w-6 h-6 bg-[#088D9A] rounded-full border border-slate-900/50 cursor-pointer";
+    "relative z-10 w-6 h-6 bg-[#088D9A] rounded-full border border-slate-900/50 cursor-pointer";
 
 export default function FilterSliders({ filters, onFilterChange }) {
     const [localPrice, setLocalPrice] = useState([

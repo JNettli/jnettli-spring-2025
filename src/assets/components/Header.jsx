@@ -39,7 +39,7 @@ function Header() {
     return (
         <>
             <header className="flex justify-between items-center px-6 md:px-16 py-5 border-b border-b-slate-900/50 relative">
-                <div className="flex z-1">
+                <div className="flex flex-shrink-0 w-40 md:justify-baseline justify-around">
                     <Link
                         to="/"
                         onClick={handleReset}
@@ -49,7 +49,7 @@ function Header() {
                         <img
                             src="/img/holidaze.svg"
                             alt="Holidaze Logo"
-                            className="h-10"
+                            className="w-11"
                         />
                         <p className="text-[#088D9A] ml-2 text-xl font-bold logo hidden md:block">
                             Holidaze
@@ -65,7 +65,7 @@ function Header() {
                                     ? "/img/negative.svg"
                                     : "/img/search.svg"
                             }
-                            className={`h-10 w-10 rounded-4xl hover:cursor-pointer ${
+                            className={`h-11 w-11 rounded-4xl hover:cursor-pointer ${
                                 mobileSearch ? "bg-white" : "py-2 bg-[#088D9A]"
                             }`}
                             title={
@@ -76,7 +76,10 @@ function Header() {
                         />
                     </button>
                 </div>
-                <div className="flex gap-8 z-1">
+                <div className="hidden md:block relative w-full lg:max-w-5xl px-4 z-50">
+                    <SearchBar />
+                </div>
+                <div className="flex flex-shrink-0 justify-around w-40">
                     {loggedIn && (
                         <Link to={profileId}>
                             <img
@@ -85,25 +88,24 @@ function Header() {
                                     "/img/profile.svg"
                                 }
                                 alt="Profile"
-                                className="h-10 w-10 rounded-full mt-0.5 outline-[#088D9A] hover:outline-2"
+                                className="h-11 w-11 rounded-full mt-0.5 border-[#088D9A] hover:border-2"
                                 title={`${localStorage.getItem(
                                     "userName"
                                 )}'s Profile`}
                             />
                         </Link>
                     )}
-                    <LoginModal />
-                </div>
-                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-6 xl:w-7xl lg:w-6xl">
-                    <SearchBar />
+                    <div className="w-11 h-11">
+                        <LoginModal />
+                    </div>
                 </div>
             </header>
             <div
-                className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
-                    mobileSearch ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                className={`md:hidden transition-all duration-300 ease-in-out ${
+                    mobileSearch ? "max-h-40 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
                 } bg-white px-6`}
             >
-                <div className="py-2">
+                <div className="py-4">
                     <SearchBar />
                 </div>
             </div>
