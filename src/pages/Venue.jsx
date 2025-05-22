@@ -147,11 +147,17 @@ function Venue() {
     if (!venue) return <p>Loading venue...</p>;
 
     return (
-        <div>
+        <div className="flex flex-col items-center">
+        <div className="w-full flex flex-col items-center">
             {isOwner && <Link to={`/venues/edit/${venueId}`}>Here!</Link>}
-            <img src={venue.media[0].url} alt={venue.media[0].alt} />
-            <h1 className="truncate">{venue.name}</h1>
-            <p className="truncate">{venue.description}</p>
+            <img src={venue.media[0].url} alt={venue.media[0].alt} className="h-128 object-cover w-1/2" />
+            <div className="border-b border-slate-900/50 my-4 w-4/5"></div>
+        </div>
+        <div className="flex w-full justify-around mt-4">
+            <div className="w-1/2 bg-red-400">
+
+            <h1 className="truncate max-w-50">{venue.name}</h1>
+            <p className="truncate max-w-50">{venue.description}</p>
             <p>Price per night: {venue.price}$</p>
             <p>Rating: {venue.rating}</p>
             <p>Address: {venue.location.address || "N/A"}</p>
@@ -163,20 +169,21 @@ function Venue() {
             <p>Breakfast: {venue.meta.breakfast ? "Yes" : "No"}</p>
             <p>Pets: {venue.meta.pets ? "Yes" : "No"}</p>
             <p>Parking: {venue.meta.parking ? "Yes" : "No"}</p>
+            <p>Currently Booked: {venue._count.bookings}</p>
+            </div>
+            {console.log(venue)}
 
-            <label className="block my-4">
-                Number of guests:
-                <input
-                    type="number"
-                    value={guests}
-                    min={1}
-                    max={venue.maxGuests}
-                    onChange={(e) => setGuests(Number(e.target.value))}
-                    className="border p-2 rounded ml-2 w-32"
-                />
-            </label>
 
-            <h2 className="text-xl font-bold mt-6 mb-2">Pick your date</h2>
+
+            <div className="flex flex-col w-fit items-center gap-4">
+            <div className="border border-slate-900/50 rounded-xl p-4 w-fit">
+                <img src={venue.owner.avatar.url} alt={venue.owner.avatar.alt} className="h-32 w-32 rounded-full object-cover border-4 border-[#088D9A]" />
+                <p>VenueOwner: {venue.owner.name}</p>
+                <p>VenueOwnerBio: {venue.owner.bio == "" ? "I sure love being a venue owner!" :  venue.owner.bio}</p>
+            </div>
+            <div className="flex flex-col border border-slate-900/50 shadow rounded-xl p-4 w-full">
+
+            <h2 className="text-xl font-bold mb-2">Pick your date</h2>
             <DateRange
                 editableDateInputs={true}
                 onChange={(item) => {
@@ -205,19 +212,34 @@ function Venue() {
                 ranges={dateRange}
                 disabledDates={disabledDates}
                 minDate={new Date()}
-            />
+                className="w-fit self-center"
+                />
+
+            <label className="my-4">
+                Number of guests:
+                <input
+                    type="number"
+                    value={guests}
+                    min={1}
+                    max={venue.maxGuests}
+                    onChange={(e) => setGuests(Number(e.target.value))}
+                    className="border p-2 rounded ml-2 w-32"
+                    />
+            </label>
 
             <button
                 onClick={handleBooking}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
+                >
                 Book Now
             </button>
+                    </div>
+                </div>
 
             <dialog
                 ref={dialogRef}
                 className="rounded p-6 w-96 max-w-md shadow-xl border transform duration-300"
-            >
+                >
                 <h2 className="text-xl font-bold mb-4">Confirm Your Booking</h2>
                 {checkoutData && (
                     <div className="space-y-2 text-sm text-gray-700 flex flex-col">
@@ -266,7 +288,7 @@ function Venue() {
                             setCheckoutData(null);
                         }}
                         className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                    >
+                        >
                         Cancel
                     </button>
                     <button
@@ -304,19 +326,18 @@ function Venue() {
                             }
                         }}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
+                        >
                         Confirm Booking
                     </button>
                 </div>
             </dialog>
-
-            <p>Currently Booked: {venue._count.bookings}</p>
+        </div>
 
             <div className="flex gap-2">
                 {userBookings.map((booking) => (
                     <div
-                        key={booking.id}
-                        className="border p-4 my-2 rounded w-42"
+                    key={booking.id}
+                    className="border p-4 my-2 rounded w-42"
                     >
                         <p>
                             <strong>Your booking:</strong>
@@ -334,20 +355,20 @@ function Venue() {
                         <button
                             className="text-white mt-2 p-2 bg-blue-600 rounded w-full cursor-pointer"
                             onClick={() => handleEditClick(booking)}
-                        >
+                            >
                             Edit Booking
                         </button>
                         <button
                             className="text-white mt-2 p-2 bg-red-600 rounded w-full cursor-pointer"
                             onClick={() => handleDeleteBooking(booking.id)}
-                        >
+                            >
                             Delete Booking
                         </button>
 
                         {editBookingId === booking.id && (
                             <form
-                                onSubmit={handleUpdateBooking}
-                                className="mt-4 space-y-2"
+                            onSubmit={handleUpdateBooking}
+                            className="mt-4 space-y-2"
                             >
                                 <label>
                                     From:
@@ -355,8 +376,8 @@ function Venue() {
                                         type="date"
                                         value={
                                             editData.dateFrom
-                                                .toISOString()
-                                                .split("T")[0]
+                                            .toISOString()
+                                            .split("T")[0]
                                         }
                                         onChange={(e) =>
                                             setEditData({
@@ -368,7 +389,7 @@ function Venue() {
                                         }
                                         required
                                         className="border rounded p-1 w-full"
-                                    />
+                                        />
                                 </label>
                                 <label>
                                     To:
@@ -376,8 +397,8 @@ function Venue() {
                                         type="date"
                                         value={
                                             editData.dateTo
-                                                .toISOString()
-                                                .split("T")[0]
+                                            .toISOString()
+                                            .split("T")[0]
                                         }
                                         onChange={(e) =>
                                             setEditData({
@@ -389,7 +410,7 @@ function Venue() {
                                         }
                                         required
                                         className="border rounded p-1 w-full"
-                                    />
+                                        />
                                 </label>
                                 <label>
                                     Guests:
@@ -407,19 +428,19 @@ function Venue() {
                                         }
                                         required
                                         className="border rounded p-1 w-full"
-                                    />
+                                        />
                                 </label>
                                 <button
                                     type="submit"
                                     className="bg-green-600 text-white px-3 py-1 rounded"
-                                >
+                                    >
                                     Save
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setEditBookingId(null)}
                                     className="ml-2 text-red-500"
-                                >
+                                    >
                                     Cancel
                                 </button>
                             </form>
@@ -427,9 +448,10 @@ function Venue() {
                     </div>
                 ))}
             </div>
-
+            <div className="relative z-10">
             <MapDisplay lat={venue.location.lat} lng={venue.location.lng} />
-        </div>
+            </div>
+                </div>
     );
 }
 
