@@ -3,8 +3,8 @@ document.title = "About Holidaze";
 function About() {
     return (
         <>
-            <div className="max-w-4xl flex mx-auto px-4 py-8">
-                <div className="mx-8">
+            <div className="max-w-5xl flex mx-auto px-4 pt-8">
+                <div className="mx-8 bg-white rounded-xl shadow-lg px-16 py-4">
                     <h1 className="text-4xl font-bold text-center mb-6 text-[#088D9A]">
                         About Holidaze
                     </h1>

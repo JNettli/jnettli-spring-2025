@@ -43,6 +43,9 @@ export async function register(name, email, password, userType) {
 }
 
 export function logout() {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userImage");
     window.location.href = "/";
 }

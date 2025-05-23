@@ -43,7 +43,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
             <div
                 className={`transition-all duration-700 overflow-hidden ${
                     isOpen
-                        ? "lg:max-h-[450px] max-h-[670px] opacity-100"
+                        ? "lg:max-h-[450px] max-h-[670px] opacity-100 bg-slate-50"
                         : "max-h-0 opacity-0"
                 }`}
             >
@@ -57,7 +57,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                             />
                         </div>
                     </div>
-                    <div className="border-b-slate-900/20 border-b w-9/10 mx-auto mt-8"></div>
+                    <div className="border-b-slate-900/20 border-b w-9/10 mx-auto my-2"></div>
                     <div className="flex lg:flex-row lg:mx-0 flex-col w-full justify-around mx-auto">
                         <div>
                             <h2 className="font-semibold mb-2">Amenities</h2>
@@ -86,7 +86,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                                         sortBy: e.target.value || undefined,
                                     })
                                 }
-                                className="border p-2 rounded w-full border-[#088D9A] focus:outline-[#088D9A]"
+                                className="border p-2 rounded w-full border-[#088D9A] focus:outline-[#088D9A] cursor-pointer"
                             >
                                 <option value="">Choose Option</option>
                                 <option value="rating">Rating</option>
@@ -104,7 +104,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                             onApply?.();
                             setIsOpen(false);
                         }}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        className="bg-[#088D9A] text-white px-4 py-2 rounded hover:bg-[#077d89] cursor-pointer transition duration-150"
                     >
                         Apply Filters
                     </button>
@@ -113,7 +113,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                             onReset?.();
                             setIsOpen(false);
                         }}
-                        className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition"
+                        className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 cursor-pointer transition duration-150"
                     >
                         Clear Filters
                     </button>
@@ -121,10 +121,10 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                 <div className="border-b-slate-900/20 border-b w-5xl mx-auto"></div>
             </div>
 
-            <div className="px-4 pt-4 mx-auto">
+            <div className="px-4 pt-4 bg-slate-50 w-full items-center flex flex-col">
                 <button
                     onClick={toggleFilters}
-                    className="bg-gray-100 px-4 py-2 rounded hover:bg-gray-200 transition"
+                    className="bg-[#088D9A] text-white px-4 w-32 py-2 rounded hover:bg-[#077d89] cursor-pointer transition duration-150"
                 >
                     {isOpen ? "Hide Filters" : "Show Filters"}
                 </button>

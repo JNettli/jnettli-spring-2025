@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { login, logout } from "../auth";
 import { register } from "../auth";
-import { isLoggedIn, showError } from "./functions";
+import { isLoggedIn } from "./functions";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function LoginModal() {
     const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +46,7 @@ export default function LoginModal() {
 
     const getPasswordScore = (password) => {
         let score = 0;
-        if (password.length >= 6) score += 1;
+        if (password.length >= 8) score += 1;
         if (/[A-Z]/.test(password)) score += 1;
         if (/\d/.test(password)) score += 1;
         if (/[^A-Za-z0-9]/.test(password)) score += 1;
@@ -57,22 +58,50 @@ export default function LoginModal() {
         setPasswordScore(score);
     }, [password]);
 
+    function getErrorMessage(error) {
+        if (!error) {
+            return "Something went wrong. Please try again.";
+        } else {
+            return error.errors[0].message;
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isRegister) {
             try {
                 await register(userName, email, password, userType);
+                toast.success(
+                    <>
+                        Registration Successful! <br />
+                        Please Log In!
+                    </>
+                );
+                closeModal();
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 2000);
             } catch (error) {
-                showError("Registration failed.", error);
+                toast.error(getErrorMessage(error));
+                console.error("Registration failed.", error);
             }
-            window.location.href = "/";
         } else {
             try {
                 await login(email, password);
+                toast.success(
+                    <>
+                        Login Successful! <br />
+                        Logging you in, please wait...
+                    </>
+                );
+                closeModal();
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 2000);
             } catch (error) {
-                showError("Login failed.", error);
+                toast.error(getErrorMessage(error));
+                console.error("Login failed.", error);
             }
-            window.location.href = "/";
         }
     };
 
@@ -80,6 +109,7 @@ export default function LoginModal() {
 
     return (
         <>
+            <ToastContainer position="top-center" autoClose={3000} />
             <button
                 onClick={() => (isAuth ? logout() : setIsOpen(true))}
                 className="transition hover:cursor-pointer"
@@ -103,13 +133,13 @@ export default function LoginModal() {
 
             {isOpen && (
                 <div
-                    onClick={closeModal}
+                    onMouseDown={closeModal}
                     className={`fixed inset-0 flex items-center justify-center z-50 transition duration-150 ${
                         fade ? "bg-black/50" : "bg-transparent"
                     }`}
                 >
                     <div
-                        onClick={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
                         className={`bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm transform transition-all duration-300 relative ${
                             fade
                                 ? "scale-100 opacity-100"
