@@ -290,58 +290,64 @@ function Profile() {
                             <p>Loading bookings...</p>
                         ) : bookings.length > 0 ? (
                             <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 gap-6">
-                                {bookings.map((booking) => (
-                                    <Link
-                                        to={`/venue/${booking.venue.id}`}
-                                        key={booking.venue.id}
-                                        className="bg-white rounded-xl shadow hover:shadow-lg transition p-4"
-                                    >
-                                        <h3 className="text-lg font-semibold truncate mb-1">
-                                            {booking.venue.name}
-                                        </h3>
-                                        <p className="text-slate-500 text-sm mb-2">
-                                            {booking.venue.location?.city}
-                                        </p>
-                                        <p className="text-slate-600 text-sm">
-                                            <span className="font-medium">
-                                                From:
-                                            </span>{" "}
-                                            {new Date(
-                                                booking.dateFrom
-                                            ).toLocaleDateString("en-GB", {
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
-                                            })}
-                                        </p>
-                                        <p className="text-slate-600 text-sm mb-1">
-                                            <span className="font-medium">
-                                                To:
-                                            </span>{" "}
-                                            {new Date(
-                                                booking.dateTo
-                                            ).toLocaleDateString("en-GB", {
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
-                                            })}
-                                        </p>
-                                        <p className="text-slate-800 font-medium">
-                                            {differenceInCalendarDays(
-                                                new Date(booking.dateTo),
-                                                new Date(booking.dateFrom)
-                                            ) + 1}{" "}
-                                            {differenceInCalendarDays(
-                                                new Date(booking.dateTo),
-                                                new Date(booking.dateFrom)
-                                            ) +
-                                                1 ===
-                                            1
-                                                ? "night"
-                                                : "nights"}
-                                        </p>
-                                    </Link>
-                                ))}
+                                {bookings
+                                    .filter(
+                                        (booking) =>
+                                            new Date(booking.dateTo) >=
+                                            new Date()
+                                    )
+                                    .map((booking) => (
+                                        <Link
+                                            to={`/venue/${booking.venue.id}`}
+                                            key={booking.venue.id}
+                                            className="bg-white rounded-xl shadow hover:shadow-lg transition p-4"
+                                        >
+                                            <h3 className="text-lg font-semibold truncate mb-1">
+                                                {booking.venue.name}
+                                            </h3>
+                                            <p className="text-slate-500 text-sm mb-2">
+                                                {booking.venue.location?.city}
+                                            </p>
+                                            <p className="text-slate-600 text-sm">
+                                                <span className="font-medium">
+                                                    From:
+                                                </span>{" "}
+                                                {new Date(
+                                                    booking.dateFrom
+                                                ).toLocaleDateString("en-GB", {
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric",
+                                                })}
+                                            </p>
+                                            <p className="text-slate-600 text-sm mb-1">
+                                                <span className="font-medium">
+                                                    To:
+                                                </span>{" "}
+                                                {new Date(
+                                                    booking.dateTo
+                                                ).toLocaleDateString("en-GB", {
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric",
+                                                })}
+                                            </p>
+                                            <p className="text-slate-800 font-medium">
+                                                {differenceInCalendarDays(
+                                                    new Date(booking.dateTo),
+                                                    new Date(booking.dateFrom)
+                                                ) + 1}{" "}
+                                                {differenceInCalendarDays(
+                                                    new Date(booking.dateTo),
+                                                    new Date(booking.dateFrom)
+                                                ) +
+                                                    1 ===
+                                                1
+                                                    ? "night"
+                                                    : "nights"}
+                                            </p>
+                                        </Link>
+                                    ))}
                             </div>
                         ) : (
                             <p className="text-slate-500">No bookings found.</p>
