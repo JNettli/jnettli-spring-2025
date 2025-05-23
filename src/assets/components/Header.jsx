@@ -38,7 +38,7 @@ function Header() {
 
     return (
         <>
-            <header className="flex justify-between items-center px-6 md:px-16 py-5 border-b border-b-slate-900/50 relative">
+            <header className="flex justify-between items-center px-6 md:px-16 py-5 border-b border-b-slate-900/50 bg-slate-50 relative">
                 <div className="flex flex-shrink-0 w-40 md:justify-baseline justify-around">
                     <Link
                         to="/"

@@ -195,13 +195,13 @@ function Venue() {
                 </div>
             </div>
 
-            <div className="border-b border-slate-900/50 my-4 w-4/5"></div>
+            <div className="border-b border-slate-900/20 my-4 w-4/5"></div>
             <div className="flex w-full max-w-5xl lg:justify-around gap-4 lg:items-start items-center mt-4 lg:flex-row flex-col">
                 <div className="lg:w-2/3 w-full space-y-6 px-4">
                     <h1 className="text-center font-bold text-4xl text-[#088D9A] w-full truncate">
                         {venue.name}
                     </h1>
-                    <div className="border-b border-slate-900/50 mx-auto w-4/5"></div>
+                    <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
 
                     <div>
                         <h2 className="text-2xl font-semibold text-slate-800 mb-2">
@@ -228,12 +228,12 @@ function Venue() {
                                             : "Show more"}
                                     </p>
                                 </button>
-                                <div className="border-b border-slate-900/50 w-2/5 mx-auto"></div>
+                                <div className="border-b border-slate-900/20 w-2/5 mx-auto"></div>
                             </>
                         )}
                     </div>
 
-                    <div className="border-b border-slate-900/50 mx-auto w-4/5"></div>
+                    <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
                     <div className="flex flex-wrap justify-evenly text-base text-slate-800">
                         <span className="font-medium">Max Guests:</span>{" "}
                         <div className="flex gap-2">
@@ -248,7 +248,7 @@ function Venue() {
                         {venue._count.bookings}
                     </div>
 
-                    <div className="border-b border-slate-900/50 mx-auto w-4/5"></div>
+                    <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
                     <div>
                         <h3 className="text-lg font-semibold text-slate-800 mb-1">
                             Amenities
@@ -277,7 +277,7 @@ function Venue() {
                         </div>
                     </div>
 
-                    <div className="rounded-xl border border-slate-900/50 shadow-md p-4 bg-white flex flex-col w-full max-w-5xl justify-between mt-8">
+                    <div className="rounded-xl border border-slate-900/10 shadow-md p-4 flex flex-col w-full max-w-5xl justify-between mt-8">
                         <h3 className="text-lg font-semibold text-slate-800 mb-2 bg-white relative -top-8 w-fit px-1">
                             Location
                         </h3>
@@ -323,8 +323,8 @@ function Venue() {
                     </div>
                 </div>
 
-                <div className="flex flex-col w-fit items-center gap-4">
-                    <div className="border border-slate-900/50 rounded-xl p-4 w-full shadow-md flex justify-between items-center gap-4">
+                <div className="flex flex-col w-fit items-center gap-8">
+                    <div className="rounded-xl bg-white p-4 w-full shadow-lg flex justify-between items-center gap-4">
                         <div>
                             <p>This venue is managed by:</p>
                             <h2 className="text-2xl font-bold text-[#088D9A]">
@@ -332,12 +332,14 @@ function Venue() {
                             </h2>
                         </div>
                         <img
-                            src={venue.owner.avatar.url}
-                            alt={venue.owner.avatar.alt}
+                            src={venue.owner.avatar.url || "/img/profile.svg"}
+                            alt={
+                                venue.owner.avatar.alt || "A cool profile image"
+                            }
                             className="h-20 w-20 rounded-full object-cover border-4 border-[#088D9A]"
                         />
                     </div>
-                    <div className="flex flex-col lg:border lg:border-slate-900/50 lg:shadow-md rounded-xl lg:p-4 w-full max-w-screen">
+                    <div className="flex flex-col bg-white lg:shadow-lg rounded-xl lg:p-4 w-full max-w-screen">
                         <h2 className="text-xl mb-2 text-center">
                             <p className="inline font-semibold text-[#088D9A]">
                                 ${venue.price}
@@ -418,7 +420,7 @@ function Venue() {
                         {userBookings.map((booking) => (
                             <div
                                 key={booking.id}
-                                className="border border-slate-900/50 p-4 my-2 rounded-xl w-fit shadow-md text-slate-700"
+                                className="bg-white p-4 my-2 rounded-xl w-fit shadow-lg text-slate-700"
                             >
                                 <p className="font-bold text-lg text-slate-800">
                                     Your booking:
@@ -427,13 +429,21 @@ function Venue() {
                                     <p className="font-semibold">From: </p>
                                     {new Date(
                                         booking.dateFrom
-                                    ).toLocaleDateString()}{" "}
+                                    ).toLocaleDateString("en-GB", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}{" "}
                                 </div>
                                 <div className="flex justify-between">
                                     <p className="font-semibold">To: </p>
                                     {new Date(
                                         booking.dateTo
-                                    ).toLocaleDateString()}{" "}
+                                    ).toLocaleDateString("en-GB", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}{" "}
                                 </div>
                                 <div className="flex justify-between">
                                     <p className="font-semibold">
@@ -568,13 +578,21 @@ function Venue() {
                                 <strong>From:</strong>{" "}
                                 {new Date(
                                     checkoutData.dateFrom
-                                ).toLocaleDateString()}
+                                ).toLocaleDateString("en-GB", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })}
                             </p>
                             <p className="flex justify-between">
                                 <strong>To:</strong>{" "}
                                 {new Date(
                                     checkoutData.dateTo
-                                ).toLocaleDateString()}
+                                ).toLocaleDateString("en-GB", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })}
                             </p>
                             <p className="flex justify-between">
                                 <strong>Total Nights:</strong>{" "}

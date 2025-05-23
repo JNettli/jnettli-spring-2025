@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { APIVenues } from "./assets/Constants";
 import { useVenueStore } from "./assets/useVenueStore";
+import { toast, ToastContainer } from "react-toastify";
 
 function App() {
     document.title = "Holidaze | Find your new vacation spot";
@@ -95,6 +96,7 @@ function App() {
             setIsLoaded(true);
         } catch (err) {
             console.error("Error loading full venue list:", err);
+            toast.error("Error loading full venue list:", err);
         }
     }, [venues, setVenues, isLoaded, setIsLoaded]);
 
@@ -237,12 +239,19 @@ function App() {
     return (
         <>
             <div className="max-w-7xl mx-auto p-4">
+                <ToastContainer position="top-center" autoClose={3000} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {displayedVenues.map((venue) => (
-                        <div key={venue.id} className="bg-red-400 rounded-lg p-4">
+                        <div
+                            key={venue.id}
+                            className="bg-red-400 rounded-lg p-4"
+                        >
                             <Link to={`/venue/${venue.id}`}>
                                 <img
-                                    src={venue.media[0]?.url || "img/error-image.svg"}
+                                    src={
+                                        venue.media[0]?.url ||
+                                        "img/error-image.svg"
+                                    }
                                     alt={venue.media[0]?.alt || "Missing alt"}
                                     className="w-full h-40 object-cover rounded"
                                     onError={(e) =>
@@ -250,7 +259,10 @@ function App() {
                                     }
                                 />
                             </Link>
-                            <Link to={`/venue/${venue.id}`} className="font-bold text-white">
+                            <Link
+                                to={`/venue/${venue.id}`}
+                                className="font-bold text-white"
+                            >
                                 {venue.name}
                             </Link>
                         </div>
@@ -259,7 +271,9 @@ function App() {
 
                 <div ref={ref} className="h-16"></div>
 
-                {loading && <p className="text-center mt-4">Loading venues...</p>}
+                {loading && (
+                    <p className="text-center mt-4">Loading venues...</p>
+                )}
                 {!loading && !hasMore && displayedVenues.length === 0 && (
                     <p className="text-center text-gray-500 mt-4">
                         No venues match your filters.
