@@ -49,7 +49,7 @@ function Header() {
                         <img
                             src="/img/holidaze.svg"
                             alt="Holidaze Logo"
-                            className="w-11"
+                            className="w-11 h-9 -mr-2"
                         />
                         <p className="text-[#088D9A] ml-2 text-xl font-bold logo hidden md:block">
                             Holidaze
@@ -102,7 +102,9 @@ function Header() {
             </header>
             <div
                 className={`md:hidden transition-all duration-300 ease-in-out ${
-                    mobileSearch ? "max-h-40 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+                    mobileSearch
+                        ? "max-h-40 opacity-100"
+                        : "max-h-0 opacity-0 overflow-hidden"
                 } bg-white px-6`}
             >
                 <div className="py-4">

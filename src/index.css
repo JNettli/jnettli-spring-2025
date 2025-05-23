@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #088d9a #97d0d5;
+}
+
 body {
     font-family: Nunito;
 }

@@ -1,10 +1,12 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import { APIBookings, APIVenues } from "../assets/Constants";
 import { MapDisplay } from "../assets/components/Map";
 import { DateRange } from "react-date-range";
 import { eachDayOfInterval } from "date-fns";
 import { APIKEY } from "../assets/auth";
+import "react-toastify/dist/ReactToastify.css";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
@@ -15,6 +17,8 @@ function Venue() {
     const leftCalendar = useRef(null);
     const rightCalendar = useRef(null);
     const dialogRef = useRef(null);
+    const [showFullDesc, setShowFullDesc] = useState(false);
+    const [mainImageIndex, setMainImageIndex] = useState(0);
 
     const [dateRange, setDateRange] = useState([
         {
@@ -41,8 +45,8 @@ function Venue() {
         dateTo: new Date(),
         guests: 1,
     });
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const navigate = useNavigate();
-
     useEffect(() => {
         const calendars = document.querySelectorAll(".rdrMonth");
         if (calendars.length === 2) {
@@ -50,6 +54,14 @@ function Venue() {
             rightCalendar.current = calendars[1];
         }
     }, [venue]);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [bookingToDelete, setBookingToDelete] = useState(null);
+    const confirmDelete = () => {
+        if (bookingToDelete) {
+            handleDeleteBooking(bookingToDelete);
+            setShowConfirmModal(false);
+        }
+    };
 
     const handleBooking = () => {
         const { startDate, endDate } = dateRange[0];
@@ -94,8 +106,7 @@ function Venue() {
         });
     }
 
-    async function handleUpdateBooking(e) {
-        e.preventDefault();
+    async function handleUpdateBooking() {
         try {
             const res = await fetch(`${APIBookings}/${editBookingId}`, {
                 method: "PUT",
@@ -112,19 +123,17 @@ function Venue() {
             });
 
             if (!res.ok) throw new Error("Failed to update booking");
-            alert("Booking updated!");
+
             setEditBookingId(null);
+            toast.success("Booking updated successfully");
+            window.location.reload();
         } catch (error) {
-            console.error("Update failed:", error);
+            toast.error("Error updating booking");
+            console.error(error);
         }
     }
 
     async function handleDeleteBooking(bookingId) {
-        const confirmDelete = window.confirm(
-            "Are you sure you want to cancel this booking?"
-        );
-        if (!confirmDelete) return;
-
         try {
             const res = await fetch(`${APIBookings}/${bookingId}`, {
                 method: "DELETE",
@@ -136,322 +145,599 @@ function Venue() {
 
             if (!res.ok) throw new Error("Failed to delete booking");
 
-            alert("Booking deleted!");
             setBookedDates((prev) => prev.filter((b) => b.id !== bookingId));
+            toast.success("Booking deleted successfully");
         } catch (error) {
-            console.error("Delete failed:", error);
+            toast.error("Error deleting booking");
+            console.error(error);
         }
     }
+    useEffect(() => {
+        if (venue && venue.media && mainImageIndex >= venue.media.length) {
+            setMainImageIndex(0);
+        }
+    }, [venue, mainImageIndex]);
 
     if (!venueId) return <p>No venue ID provided.</p>;
     if (!venue) return <p>Loading venue...</p>;
 
     return (
         <div className="flex flex-col items-center">
-        <div className="w-full flex flex-col items-center">
-            {isOwner && <Link to={`/venues/edit/${venueId}`}>Here!</Link>}
-            <img src={venue.media[0].url} alt={venue.media[0].alt} className="h-128 object-cover w-1/2" />
-            <div className="border-b border-slate-900/50 my-4 w-4/5"></div>
-        </div>
-        <div className="flex w-full justify-around mt-4">
-            <div className="w-1/2 bg-red-400">
-
-            <h1 className="truncate max-w-50">{venue.name}</h1>
-            <p className="truncate max-w-50">{venue.description}</p>
-            <p>Price per night: {venue.price}$</p>
-            <p>Rating: {venue.rating}</p>
-            <p>Address: {venue.location.address || "N/A"}</p>
-            <p>City: {venue.location.city || "N/A"}</p>
-            <p>Country: {venue.location.country || "N/A"}</p>
-            <p>Zip code: {venue.location.zip || "N/A"}</p>
-            <p>Max Guests: {venue.maxGuests}</p>
-            <p>Wifi: {venue.meta.wifi ? "Yes" : "No"}</p>
-            <p>Breakfast: {venue.meta.breakfast ? "Yes" : "No"}</p>
-            <p>Pets: {venue.meta.pets ? "Yes" : "No"}</p>
-            <p>Parking: {venue.meta.parking ? "Yes" : "No"}</p>
-            <p>Currently Booked: {venue._count.bookings}</p>
-            </div>
-            {console.log(venue)}
-
-
-
-            <div className="flex flex-col w-fit items-center gap-4">
-            <div className="border border-slate-900/50 rounded-xl p-4 w-fit">
-                <img src={venue.owner.avatar.url} alt={venue.owner.avatar.alt} className="h-32 w-32 rounded-full object-cover border-4 border-[#088D9A]" />
-                <p>VenueOwner: {venue.owner.name}</p>
-                <p>VenueOwnerBio: {venue.owner.bio == "" ? "I sure love being a venue owner!" :  venue.owner.bio}</p>
-            </div>
-            <div className="flex flex-col border border-slate-900/50 shadow rounded-xl p-4 w-full">
-
-            <h2 className="text-xl font-bold mb-2">Pick your date</h2>
-            <DateRange
-                editableDateInputs={true}
-                onChange={(item) => {
-                    const clickedElement = document.activeElement;
-                    if (leftCalendar.current?.contains(clickedElement)) {
-                        setDateRange([
-                            {
-                                ...dateRange[0],
-                                startDate: item.selection.startDate,
-                            },
-                        ]);
-                    } else if (
-                        rightCalendar.current?.contains(clickedElement)
-                    ) {
-                        setDateRange([
-                            {
-                                ...dateRange[0],
-                                endDate: item.selection.endDate,
-                            },
-                        ]);
-                    } else {
-                        setDateRange([item.selection]);
-                    }
-                }}
-                moveRangeOnFirstSelection={false}
-                ranges={dateRange}
-                disabledDates={disabledDates}
-                minDate={new Date()}
-                className="w-fit self-center"
-                />
-
-            <label className="my-4">
-                Number of guests:
-                <input
-                    type="number"
-                    value={guests}
-                    min={1}
-                    max={venue.maxGuests}
-                    onChange={(e) => setGuests(Number(e.target.value))}
-                    className="border p-2 rounded ml-2 w-32"
+            <ToastContainer position="top-center" autoClose={3000} />
+            <div className="w-full">
+                <div className="w-full flex lg:flex-row flex-col items-center gap-2 justify-center">
+                    <img
+                        src={venue.media[mainImageIndex]?.url}
+                        alt={venue.media[mainImageIndex]?.alt}
+                        className="h-128 object-cover lg:w-2/3 md:w-4/5 w-full shadow-md rounded-xl"
                     />
-            </label>
-
-            <button
-                onClick={handleBooking}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                Book Now
-            </button>
-                    </div>
+                    {venue.media?.length > 1 && (
+                        <div className="flex lg:flex-col flex-row flex-wrap gap-2 lg:w-20 w-full justify-center">
+                            <div className="flex gap-2 flex-wrap">
+                                {venue.media.map((image, index) => (
+                                    <img
+                                        key={index}
+                                        src={image.url}
+                                        alt={image.alt}
+                                        className={`w-18 h-18 object-cover rounded-md cursor-pointer border-4 ${
+                                            mainImageIndex === index
+                                                ? "border-[#088D9A]"
+                                                : "border-slate-300"
+                                        }`}
+                                        onClick={() => {
+                                            setMainImageIndex(index);
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
+            </div>
 
-            <dialog
-                ref={dialogRef}
-                className="rounded p-6 w-96 max-w-md shadow-xl border transform duration-300"
-                >
-                <h2 className="text-xl font-bold mb-4">Confirm Your Booking</h2>
-                {checkoutData && (
-                    <div className="space-y-2 text-sm text-gray-700 flex flex-col">
-                        <p className="flex justify-between">
-                            <strong>From:</strong>{" "}
-                            {new Date(
-                                checkoutData.dateFrom
-                            ).toLocaleDateString()}
-                        </p>
-                        <p className="flex justify-between">
-                            <strong>To:</strong>{" "}
-                            {new Date(checkoutData.dateTo).toLocaleDateString()}
-                        </p>
-                        <p className="flex justify-between">
-                            <strong>Total Nights:</strong>{" "}
-                            {(new Date(checkoutData.dateTo) -
-                                new Date(checkoutData.dateFrom)) /
-                                (1000 * 60 * 60 * 24) +
-                                1}
-                        </p>
-                        <p className="flex justify-between">
-                            <strong>Price per Night:</strong> $
-                            {checkoutData.price}
-                        </p>
-                        <p className="flex justify-between">
-                            <strong>Guests:</strong> {checkoutData.guests}
-                        </p>
-                        <div className="border-b border-slate-900/50"></div>
-                        <p className="flex justify-between">
-                            <strong>Total Price: </strong>
-                            <strong>
-                                $
-                                {((new Date(checkoutData.dateTo) -
-                                    new Date(checkoutData.dateFrom)) /
-                                    (1000 * 60 * 60 * 24) +
-                                    1) *
-                                    checkoutData.price}
-                            </strong>
-                        </p>
-                    </div>
-                )}
-                <div className="mt-6 flex justify-end gap-4">
-                    <button
-                        onClick={() => {
-                            dialogRef.current.close();
-                            setCheckoutData(null);
-                        }}
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            <div className="border-b border-slate-900/50 my-4 w-4/5"></div>
+            <div className="flex w-full max-w-5xl lg:justify-around gap-4 lg:items-start items-center mt-4 lg:flex-row flex-col">
+                <div className="lg:w-2/3 w-full space-y-6 px-4">
+                    <h1 className="text-center font-bold text-4xl text-[#088D9A] w-full truncate">
+                        {venue.name}
+                    </h1>
+                    <div className="border-b border-slate-900/50 mx-auto w-4/5"></div>
+
+                    <div>
+                        <h2 className="text-2xl font-semibold text-slate-800 mb-2">
+                            About This Place
+                        </h2>
+                        <p
+                            className={`text-base text-slate-700 whitespace-pre-line ${
+                                showFullDesc ? "" : "line-clamp-5"
+                            }`}
                         >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={async () => {
-                            try {
-                                const res = await fetch(APIBookings, {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        Authorization: `Bearer ${localStorage.getItem(
-                                            "token"
-                                        )}`,
-                                        "X-Noroff-API-Key": APIKEY,
-                                    },
-                                    body: JSON.stringify(checkoutData),
-                                });
-                                if (!res.ok) throw new Error("Booking failed!");
-                                dialogRef.current.close();
-                                setCheckoutData(null);
-                                navigate("/success", {
-                                    state: {
-                                        venue: venue.name,
-                                        dateFrom: checkoutData.dateFrom,
-                                        dateTo: checkoutData.dateTo,
-                                        guests: checkoutData.guests,
-                                        price: checkoutData.price,
-                                    },
-                                });
-                            } catch (error) {
-                                console.error(
-                                    "Error while submitting booking: ",
-                                    error
-                                );
-                                alert("Booking failed. Try again.");
-                            }
-                        }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        >
-                        Confirm Booking
-                    </button>
-                </div>
-            </dialog>
-        </div>
-
-            <div className="flex gap-2">
-                {userBookings.map((booking) => (
-                    <div
-                    key={booking.id}
-                    className="border p-4 my-2 rounded w-42"
-                    >
-                        <p>
-                            <strong>Your booking:</strong>
+                            {venue.description}
                         </p>
-                        <p>
-                            From:{" "}
-                            {new Date(booking.dateFrom).toLocaleDateString()}{" "}
-                            <br />
-                            To: {new Date(
-                                booking.dateTo
-                            ).toLocaleDateString()}{" "}
-                            <br />
-                            Guests: {booking.guests}
-                        </p>
-                        <button
-                            className="text-white mt-2 p-2 bg-blue-600 rounded w-full cursor-pointer"
-                            onClick={() => handleEditClick(booking)}
-                            >
-                            Edit Booking
-                        </button>
-                        <button
-                            className="text-white mt-2 p-2 bg-red-600 rounded w-full cursor-pointer"
-                            onClick={() => handleDeleteBooking(booking.id)}
-                            >
-                            Delete Booking
-                        </button>
-
-                        {editBookingId === booking.id && (
-                            <form
-                            onSubmit={handleUpdateBooking}
-                            className="mt-4 space-y-2"
-                            >
-                                <label>
-                                    From:
-                                    <input
-                                        type="date"
-                                        value={
-                                            editData.dateFrom
-                                            .toISOString()
-                                            .split("T")[0]
-                                        }
-                                        onChange={(e) =>
-                                            setEditData({
-                                                ...editData,
-                                                dateFrom: new Date(
-                                                    e.target.value
-                                                ),
-                                            })
-                                        }
-                                        required
-                                        className="border rounded p-1 w-full"
-                                        />
-                                </label>
-                                <label>
-                                    To:
-                                    <input
-                                        type="date"
-                                        value={
-                                            editData.dateTo
-                                            .toISOString()
-                                            .split("T")[0]
-                                        }
-                                        onChange={(e) =>
-                                            setEditData({
-                                                ...editData,
-                                                dateTo: new Date(
-                                                    e.target.value
-                                                ),
-                                            })
-                                        }
-                                        required
-                                        className="border rounded p-1 w-full"
-                                        />
-                                </label>
-                                <label>
-                                    Guests:
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={editData.guests}
-                                        onChange={(e) =>
-                                            setEditData({
-                                                ...editData,
-                                                guests: parseInt(
-                                                    e.target.value
-                                                ),
-                                            })
-                                        }
-                                        required
-                                        className="border rounded p-1 w-full"
-                                        />
-                                </label>
+                        {venue.description.length > 300 && (
+                            <>
                                 <button
-                                    type="submit"
-                                    className="bg-green-600 text-white px-3 py-1 rounded"
-                                    >
-                                    Save
+                                    onClick={() =>
+                                        setShowFullDesc(!showFullDesc)
+                                    }
+                                    className="cursor-pointer relative w-fit left-1/2 -translate-x-1/2 top-3"
+                                >
+                                    <p className="text-slate-700 bg-white mx-auto px-1">
+                                        {showFullDesc
+                                            ? "Show less"
+                                            : "Show more"}
+                                    </p>
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setEditBookingId(null)}
-                                    className="ml-2 text-red-500"
-                                    >
-                                    Cancel
-                                </button>
-                            </form>
+                                <div className="border-b border-slate-900/50 w-2/5 mx-auto"></div>
+                            </>
                         )}
                     </div>
-                ))}
-            </div>
-            <div className="relative z-10">
-            <MapDisplay lat={venue.location.lat} lng={venue.location.lng} />
-            </div>
+
+                    <div className="border-b border-slate-900/50 mx-auto w-4/5"></div>
+                    <div className="flex flex-wrap justify-evenly text-base text-slate-800">
+                        <span className="font-medium">Max Guests:</span>{" "}
+                        <div className="flex gap-2">
+                            {venue.maxGuests}
+                            <img
+                                src="/img/profile.svg"
+                                alt="Guest Icon"
+                                className="h-4 my-auto"
+                            />
+                        </div>
+                        <span className="font-medium">Currently Booked:</span>{" "}
+                        {venue._count.bookings}
+                    </div>
+
+                    <div className="border-b border-slate-900/50 mx-auto w-4/5"></div>
+                    <div>
+                        <h3 className="text-lg font-semibold text-slate-800 mb-1">
+                            Amenities
+                        </h3>
+                        <div className="flex flex-wrap gap-4">
+                            {[
+                                { label: "Wifi", value: venue.meta.wifi },
+                                { label: "Parking", value: venue.meta.parking },
+                                {
+                                    label: "Breakfast",
+                                    value: venue.meta.breakfast,
+                                },
+                                { label: "Pets", value: venue.meta.pets },
+                            ].map(({ label, value }) => (
+                                <span
+                                    key={label}
+                                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                        value
+                                            ? "bg-[#088D9A] text-white"
+                                            : "bg-slate-200 text-slate-500 line-through"
+                                    }`}
+                                >
+                                    {label}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border border-slate-900/50 shadow-md p-4 bg-white flex flex-col w-full max-w-5xl justify-between mt-8">
+                        <h3 className="text-lg font-semibold text-slate-800 mb-2 bg-white relative -top-8 w-fit px-1">
+                            Location
+                        </h3>
+                        <div className="flex justify-between -mt-10 mb-4">
+                            <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
+                                <div className="text-slate-700">
+                                    <p className="font-semibold text-lg">
+                                        Address:
+                                    </p>{" "}
+                                    {venue.location.address || "Not available"}
+                                </div>
+                                <div className="border-r border-slate-900/50 md:block hidden"></div>
+                                <div className="text-slate-700">
+                                    <p className="font-semibold text-lg">
+                                        City:
+                                    </p>{" "}
+                                    {venue.location.city || "Not available"}
+                                </div>
+                            </div>
+                            <div className="border-r border-slate-900/50"></div>
+                            <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
+                                <div className="text-slate-700">
+                                    <p className="font-semibold text-lg">
+                                        Country:
+                                    </p>{" "}
+                                    {venue.location.country || "Not available"}
+                                </div>
+                                <div className="border-r border-slate-900/50 md:block hidden"></div>
+                                <div className="text-slate-700">
+                                    <p className="font-semibold text-lg">
+                                        Zip code:
+                                    </p>{" "}
+                                    {venue.location.zip || "Not available"}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="relative z-10 h-fit w-full">
+                            <MapDisplay
+                                lat={venue.location.lat}
+                                lng={venue.location.lng}
+                            />
+                        </div>
+                    </div>
                 </div>
+
+                <div className="flex flex-col w-fit items-center gap-4">
+                    <div className="border border-slate-900/50 rounded-xl p-4 w-full shadow-md flex justify-between items-center gap-4">
+                        <div>
+                            <p>This venue is managed by:</p>
+                            <h2 className="text-2xl font-bold text-[#088D9A]">
+                                {venue.owner.name}
+                            </h2>
+                        </div>
+                        <img
+                            src={venue.owner.avatar.url}
+                            alt={venue.owner.avatar.alt}
+                            className="h-20 w-20 rounded-full object-cover border-4 border-[#088D9A]"
+                        />
+                    </div>
+                    <div className="flex flex-col lg:border lg:border-slate-900/50 lg:shadow-md rounded-xl lg:p-4 w-full max-w-screen">
+                        <h2 className="text-xl mb-2 text-center">
+                            <p className="inline font-semibold text-[#088D9A]">
+                                ${venue.price}
+                            </p>{" "}
+                            / Night
+                        </h2>
+                        <DateRange
+                            editableDateInputs={true}
+                            onChange={(item) => {
+                                const clickedElement = document.activeElement;
+                                if (
+                                    leftCalendar.current?.contains(
+                                        clickedElement
+                                    )
+                                ) {
+                                    setDateRange([
+                                        {
+                                            ...dateRange[0],
+                                            startDate: item.selection.startDate,
+                                        },
+                                    ]);
+                                } else if (
+                                    rightCalendar.current?.contains(
+                                        clickedElement
+                                    )
+                                ) {
+                                    setDateRange([
+                                        {
+                                            ...dateRange[0],
+                                            endDate: item.selection.endDate,
+                                        },
+                                    ]);
+                                } else {
+                                    setDateRange([item.selection]);
+                                }
+                            }}
+                            moveRangeOnFirstSelection={false}
+                            ranges={dateRange}
+                            disabledDates={disabledDates}
+                            minDate={new Date()}
+                            className="mx-auto"
+                        />
+
+                        <label className="my-4 mx-auto font-semibold">
+                            Number of guests:
+                            <input
+                                type="number"
+                                value={guests}
+                                min={1}
+                                max={venue.maxGuests}
+                                onChange={(e) =>
+                                    setGuests(Number(e.target.value))
+                                }
+                                className="border p-2 rounded ml-4 w-32 font-medium"
+                            />
+                        </label>
+
+                        <button
+                            onClick={handleBooking}
+                            className="bg-[#088D9A] text-white px-4 py-2 rounded hover:bg-[#077d89] transition mx-auto w-2/3"
+                        >
+                            Book Now
+                        </button>
+                    </div>
+
+                    {isOwner && (
+                        <>
+                            <div className="lg:border-0 border-b border-slate-900/50 w-4/5"></div>
+                            <Link
+                                to={`/venues/edit/${venueId}`}
+                                className="text-white p-2 text-center bg-[#088D9A] hover:bg-[#077d89] rounded w-2/3 cursor-pointer transition duration-150"
+                            >
+                                Edit Venue
+                            </Link>
+                        </>
+                    )}
+                    <div className="flex flex-col flex-wrap">
+                        {userBookings.map((booking) => (
+                            <div
+                                key={booking.id}
+                                className="border border-slate-900/50 p-4 my-2 rounded-xl w-fit shadow-md text-slate-700"
+                            >
+                                <p className="font-bold text-lg text-slate-800">
+                                    Your booking:
+                                </p>
+                                <div className="flex justify-between">
+                                    <p className="font-semibold">From: </p>
+                                    {new Date(
+                                        booking.dateFrom
+                                    ).toLocaleDateString()}{" "}
+                                </div>
+                                <div className="flex justify-between">
+                                    <p className="font-semibold">To: </p>
+                                    {new Date(
+                                        booking.dateTo
+                                    ).toLocaleDateString()}{" "}
+                                </div>
+                                <div className="flex justify-between">
+                                    <p className="font-semibold">
+                                        Total Nights:{" "}
+                                    </p>
+                                    {Math.floor(
+                                        (new Date(booking.dateTo) -
+                                            new Date(booking.dateFrom)) /
+                                            (1000 * 60 * 60 * 24)
+                                    ) + 1}
+                                </div>
+                                <div className="flex justify-between">
+                                    <p className="font-semibold">Guests:</p>
+                                    {booking.guests}
+                                </div>
+                                <button
+                                    className="text-white mt-2 p-2 bg-[#088D9A] hover:bg-[#077d89] rounded w-full cursor-pointer transition duration-150"
+                                    onClick={() => handleEditClick(booking)}
+                                >
+                                    Edit Booking
+                                </button>
+                                <button
+                                    className="text-white mt-2 p-2 bg-red-600 hover:bg-red-700 rounded w-full cursor-pointer transition duration-150"
+                                    onClick={() => {
+                                        setBookingToDelete(booking.id);
+                                        setShowConfirmModal(true);
+                                    }}
+                                >
+                                    Delete Booking
+                                </button>
+
+                                {editBookingId === booking.id && (
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            setShowConfirmDialog(true);
+                                        }}
+                                        className="flex flex-col gap-2"
+                                    >
+                                        <label>
+                                            From:
+                                            <input
+                                                type="date"
+                                                value={
+                                                    editData.dateFrom
+                                                        .toISOString()
+                                                        .split("T")[0]
+                                                }
+                                                onChange={(e) =>
+                                                    setEditData({
+                                                        ...editData,
+                                                        dateFrom: new Date(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                }
+                                                required
+                                                className="border rounded p-1 w-full"
+                                            />
+                                        </label>
+                                        <label>
+                                            To:
+                                            <input
+                                                type="date"
+                                                value={
+                                                    editData.dateTo
+                                                        .toISOString()
+                                                        .split("T")[0]
+                                                }
+                                                onChange={(e) =>
+                                                    setEditData({
+                                                        ...editData,
+                                                        dateTo: new Date(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                }
+                                                required
+                                                className="border rounded p-1 w-full"
+                                            />
+                                        </label>
+                                        <label>
+                                            Guests:
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={editData.guests}
+                                                onChange={(e) =>
+                                                    setEditData({
+                                                        ...editData,
+                                                        guests: parseInt(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                }
+                                                required
+                                                className="border rounded p-1 w-full"
+                                            />
+                                        </label>
+                                        <button
+                                            type="submit"
+                                            className="text-white mt-2 p-2 bg-[#088D9A] hover:bg-[#077d89] rounded w-full cursor-pointer transition duration-150"
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setEditBookingId(null)
+                                            }
+                                            className="text-black p-2 bg-gray-300 hover:bg-gray-400 rounded w-full cursor-pointer transition duration-150"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <dialog
+                    ref={dialogRef}
+                    className="rounded p-6 w-fit lg:max-w-5xl max-w-screen shadow-xl m-auto"
+                >
+                    <h2 className="text-xl font-semibold mb-4 truncate">
+                        Confirm Your Booking at{" "}
+                        <p className="text-[#088D9A] font-bold">{venue.name}</p>
+                    </h2>
+                    {checkoutData && (
+                        <div className="space-y-2 text-sm text-gray-700 flex flex-col">
+                            <p className="flex justify-between">
+                                <strong>From:</strong>{" "}
+                                {new Date(
+                                    checkoutData.dateFrom
+                                ).toLocaleDateString()}
+                            </p>
+                            <p className="flex justify-between">
+                                <strong>To:</strong>{" "}
+                                {new Date(
+                                    checkoutData.dateTo
+                                ).toLocaleDateString()}
+                            </p>
+                            <p className="flex justify-between">
+                                <strong>Total Nights:</strong>{" "}
+                                {(new Date(checkoutData.dateTo) -
+                                    new Date(checkoutData.dateFrom)) /
+                                    (1000 * 60 * 60 * 24) +
+                                    1}
+                            </p>
+                            <p className="flex justify-between">
+                                <strong>Price per Night:</strong> $
+                                {checkoutData.price}
+                            </p>
+                            <p className="flex justify-between">
+                                <strong>Guests:</strong> {checkoutData.guests}
+                            </p>
+                            <div className="border-b border-slate-900/50"></div>
+                            <p className="flex justify-between">
+                                <strong>Total Price: </strong>
+                                <strong>
+                                    $
+                                    {((new Date(checkoutData.dateTo) -
+                                        new Date(checkoutData.dateFrom)) /
+                                        (1000 * 60 * 60 * 24) +
+                                        1) *
+                                        checkoutData.price}
+                                </strong>
+                            </p>
+                        </div>
+                    )}
+                    <div className="mt-6 flex justify-end gap-4">
+                        <button
+                            onClick={() => {
+                                dialogRef.current.close();
+                                setCheckoutData(null);
+                            }}
+                            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition duration-150 cursor-pointer"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={async () => {
+                                try {
+                                    const res = await fetch(APIBookings, {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            Authorization: `Bearer ${localStorage.getItem(
+                                                "token"
+                                            )}`,
+                                            "X-Noroff-API-Key": APIKEY,
+                                        },
+                                        body: JSON.stringify(checkoutData),
+                                    });
+                                    if (!res.ok) {
+                                        if (res.status === 409) {
+                                            throw new Error(
+                                                "Booking conflict: No more rooms available / Too many people!"
+                                            );
+                                        } else if (res.status === 400) {
+                                            throw new Error(
+                                                "Bad request: Please check your booking details."
+                                            );
+                                        } else if (res.status === 401) {
+                                            throw new Error(
+                                                "Unauthorized: Please log in."
+                                            );
+                                        } else {
+                                            throw new Error(
+                                                `Booking failed with status ${res.status}`
+                                            );
+                                        }
+                                    }
+                                    dialogRef.current.close();
+                                    setCheckoutData(null);
+                                    navigate("/success", {
+                                        state: {
+                                            venue: venue.name,
+                                            dateFrom: checkoutData.dateFrom,
+                                            dateTo: checkoutData.dateTo,
+                                            guests: checkoutData.guests,
+                                            price: checkoutData.price,
+                                        },
+                                    });
+                                } catch (error) {
+                                    console.error(
+                                        "Error while submitting booking: ",
+                                        error
+                                    );
+                                    toast.error(
+                                        error.message ||
+                                            "Booking failed. Please try again."
+                                    );
+                                }
+                            }}
+                            className="px-4 py-2 bg-[#088D9A] text-white rounded hover:bg-[#077d89] transition duration-150 cursor-pointer"
+                        >
+                            Confirm Booking
+                        </button>
+                    </div>
+                </dialog>
+                {showConfirmDialog && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black/20 z-50">
+                        <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-sm">
+                            <h2 className="text-lg font-bold mb-2">
+                                Confirm Edit
+                            </h2>
+                            <p className="mb-4">
+                                Are you sure you want to save these booking
+                                changes?
+                            </p>
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    onClick={() => setShowConfirmDialog(false)}
+                                    className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        handleUpdateBooking(
+                                            editBookingId,
+                                            editData
+                                        );
+                                        setEditBookingId(null);
+                                        setShowConfirmDialog(false);
+                                    }}
+                                    className="px-4 py-2 bg-[#088D9A] text-white hover:bg-[#077d89] rounded cursor-pointer"
+                                >
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {showConfirmModal && (
+                    <div className="fixed inset-0 z-50 bg-black/20 flex items-center justify-center">
+                        <div className="bg-white p-6 rounded-xl shadow-lg w-96 text-center flex flex-col gap-4">
+                            <h2 className="text-xl font-bold text-slate-800">
+                                Delete Booking?
+                            </h2>
+                            <p className="text-slate-600">
+                                Are you sure you want to delete this booking?
+                                This action cannot be undone.
+                            </p>
+                            <div className="flex justify-center gap-4">
+                                <button
+                                    onClick={() => setShowConfirmModal(false)}
+                                    className="bg-gray-300 text-slate-800 px-4 py-2 rounded hover:bg-gray-400 cursor-pointer transition duration-150"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmDelete}
+                                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 cursor-pointer transition duration-150"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }
 
