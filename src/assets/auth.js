@@ -3,7 +3,7 @@ import { APILogin, APIRegister } from "./Constants";
 export const APIKEY = import.meta.env.VITE_API_KEY;
 
 export async function login(email, password) {
-    const loginResponse = await fetch(APILogin, {
+    const loginResponse = await fetch(`${APILogin}/?_holidaze=true`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -17,6 +17,10 @@ export async function login(email, password) {
         localStorage.setItem("userId", loginData.data.email);
         localStorage.setItem("userName", loginData.data.name);
         localStorage.setItem("userImage", loginData.data.avatar.url);
+        localStorage.setItem(
+            "venueManager",
+            loginData.data.venueManager.toString()
+        );
     } else {
         const err = await loginResponse.json();
         console.error(err);
@@ -47,5 +51,6 @@ export function logout() {
     localStorage.removeItem("userId");
     localStorage.removeItem("userName");
     localStorage.removeItem("userImage");
+    localStorage.removeItem("venueManager");
     window.location.href = "/";
 }

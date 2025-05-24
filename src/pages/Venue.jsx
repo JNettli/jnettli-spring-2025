@@ -405,17 +405,17 @@ function Venue() {
                         </button>
                     </div>
 
-                    {isOwner && (
-                        <>
-                            <div className="lg:border-0 border-b border-slate-900/50 w-4/5"></div>
-                            <Link
-                                to={`/venues/edit/${venueId}`}
-                                className="text-white p-2 lg:-mt-8 text-center bg-[#088D9A] hover:bg-[#077d89] rounded w-2/3 cursor-pointer transition duration-150"
-                            >
-                                Edit Venue
-                            </Link>
-                        </>
-                    )}
+                    {isOwner &&
+                        localStorage.getItem("venueManager") == "true" && (
+                            <>
+                                <Link
+                                    to={`/venues/edit/${venueId}`}
+                                    className="text-white p-2 text-center bg-[#088D9A] hover:bg-[#077d89] rounded w-2/3 cursor-pointer transition duration-150"
+                                >
+                                    Edit Venue
+                                </Link>
+                            </>
+                        )}
                     <div className="flex flex-col flex-wrap">
                         {userBookings.map((booking) => (
                             <div

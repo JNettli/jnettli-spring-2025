@@ -117,8 +117,13 @@ function Profile() {
         <div className="flex flex-col items-center px-4 py-8">
             <div className="flex lg:flex-row flex-col justify-around lg:gap-8">
                 <div className="max-w-screen">
-                    <div className="max-w-sm rounded-xl bg-white py-8 px-2 shadow-lg mb-12 flex gap-4">
-                        <div className="flex flex-col gap-2 w-fit">
+                    <div className="max-w-[360px] rounded-xl bg-white py-8 px-2 shadow-lg mb-12 flex gap-2 relative">
+                        <img
+                            src={profile.banner.url}
+                            alt={profile.banner.alt}
+                            className="w-full h-1/2 rounded-t-xl absolute top-0 left-0 max-w-full object-cover"
+                        />
+                        <div className="flex flex-col gap-2 pl-2 w-fit">
                             <img
                                 src={profile.avatar.url}
                                 alt={profile.avatar.alt}
@@ -128,21 +133,22 @@ function Profile() {
                                 {profile.name}
                             </h1>
                         </div>
-                        <div className="flex flex-col justify-evenly py-2">
-                            <p className="text-slate-600">{profile.email}</p>
-                            <div className="border-b border-b-slate-900/20"></div>
-                            <p className="mt-2 font-medium text-slate-700">
-                                Venue Manager:{" "}
-                                <span
-                                    className={
-                                        profile.venueManager
-                                            ? "text-green-600"
-                                            : "text-red-500"
-                                    }
-                                >
-                                    {profile.venueManager ? "Yes" : "No"}
-                                </span>
-                            </p>
+                        <div className="flex flex-col justify-end py-1">
+                            <div>
+                                <p className="text-slate-600">
+                                    {profile.email}
+                                </p>
+                                {profile.venueManager ? (
+                                    <img
+                                        src="/img/manager.svg"
+                                        alt="Manager Badge"
+                                        title="Manager Badge"
+                                        className="h-8 w-8 absolute top-1 right-1"
+                                    />
+                                ) : (
+                                    ""
+                                )}
+                            </div>
                         </div>
                     </div>
                     <div className="mt-6 justify-center gap-4 flex-wrap lg:flex hidden">
@@ -191,7 +197,9 @@ function Profile() {
                             Edit Profile
                         </Link>
                     )}
-                    <div className="border-r border-slate-900/20"></div>
+                    {isLoggedIn && profile.venueManager && (
+                        <div className="border-r border-slate-900/20"></div>
+                    )}
                     {isLoggedIn && profile.venueManager && (
                         <Link
                             to="/create"
@@ -262,16 +270,18 @@ function Profile() {
                                             className="h-40 w-full object-cover rounded-md mb-3"
                                             alt={venue.name}
                                         />
-                                        <h3 className="text-lg font-semibold truncate">
+                                        <h3 className="text-lg font-semibold truncate text-[#088D9A]">
                                             {venue.name}
                                         </h3>
-                                        <p className="text-slate-500 text-sm">
-                                            {venue.location?.city},{" "}
-                                            {venue.location?.country}
-                                        </p>
-                                        <p className="text-slate-800 font-bold mt-1">
-                                            ${venue.price}
-                                        </p>
+                                        <div className="flex justify-between">
+                                            <p className="text-slate-500 text-sm truncate">
+                                                {venue.location?.city},{" "}
+                                                {venue.location?.country}
+                                            </p>
+                                            <p className="text-slate-700 font-bold">
+                                                ${venue.price}
+                                            </p>
+                                        </div>
                                     </Link>
                                 ))}
                             </div>
@@ -300,38 +310,51 @@ function Profile() {
                                         <Link
                                             to={`/venue/${booking.venue.id}`}
                                             key={booking.venue.id}
-                                            className="bg-white rounded-xl shadow hover:shadow-lg transition p-4"
+                                            className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col gap-2"
                                         >
-                                            <h3 className="text-lg font-semibold truncate mb-1">
-                                                {booking.venue.name}
-                                            </h3>
-                                            <p className="text-slate-500 text-sm mb-2">
-                                                {booking.venue.location?.city}
-                                            </p>
-                                            <p className="text-slate-600 text-sm">
-                                                <span className="font-medium">
-                                                    From:
-                                                </span>{" "}
-                                                {new Date(
-                                                    booking.dateFrom
-                                                ).toLocaleDateString("en-GB", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                })}
-                                            </p>
-                                            <p className="text-slate-600 text-sm mb-1">
-                                                <span className="font-medium">
-                                                    To:
-                                                </span>{" "}
-                                                {new Date(
-                                                    booking.dateTo
-                                                ).toLocaleDateString("en-GB", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                })}
-                                            </p>
+                                            <div>
+                                                <h3 className="text-lg font-semibold truncate">
+                                                    {booking.venue.name}
+                                                </h3>
+                                                <p className="text-slate-500 text-sm truncate">
+                                                    {
+                                                        booking.venue.location
+                                                            ?.city
+                                                    }
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-slate-600 text-sm">
+                                                    <span className="font-medium">
+                                                        From:
+                                                    </span>{" "}
+                                                    {new Date(
+                                                        booking.dateFrom
+                                                    ).toLocaleDateString(
+                                                        "en-GB",
+                                                        {
+                                                            year: "numeric",
+                                                            month: "long",
+                                                            day: "numeric",
+                                                        }
+                                                    )}
+                                                </p>
+                                                <p className="text-slate-600 text-sm">
+                                                    <span className="font-medium">
+                                                        To:
+                                                    </span>{" "}
+                                                    {new Date(
+                                                        booking.dateTo
+                                                    ).toLocaleDateString(
+                                                        "en-GB",
+                                                        {
+                                                            year: "numeric",
+                                                            month: "long",
+                                                            day: "numeric",
+                                                        }
+                                                    )}
+                                                </p>
+                                            </div>
                                             <p className="text-slate-800 font-medium">
                                                 {differenceInCalendarDays(
                                                     new Date(booking.dateTo),
