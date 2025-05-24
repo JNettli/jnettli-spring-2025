@@ -245,7 +245,7 @@ function App() {
                     {displayedVenues.map((venue) => (
                         <div
                             key={venue.id}
-                            className="bg-red-400 rounded-lg p-4"
+                            className="bg-white shadow hover:shadow-lg transition duration-150 rounded-lg p-4"
                         >
                             <Link to={`/venue/${venue.id}`}>
                                 <img
@@ -262,10 +262,109 @@ function App() {
                             </Link>
                             <Link
                                 to={`/venue/${venue.id}`}
-                                className="font-bold text-white"
+                                className="font-bold text-[#088D9A] truncate"
                             >
                                 {venue.name}
                             </Link>
+
+                            <p className="text-slate-500 text-sm truncate">
+                                {venue.location?.city},{" "}
+                                {venue.location?.country}
+                            </p>
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-1">
+                                    <p
+                                        className="text-slate-700 font-bold"
+                                        title="Venue Rating"
+                                    >
+                                        {venue.rating}{" "}
+                                    </p>
+                                    <img
+                                        src="/img/rating.svg"
+                                        alt="Rating star"
+                                        className="h-4 w-4 inline"
+                                    />
+                                </div>
+                                <p className="text-slate-700 font-bold">
+                                    $ {venue.price}
+                                </p>
+                            </div>
+                            <div className="flex justify-center gap-4 border-t border-t-slate-900/20 pt-2 -mb-2 relative">
+                                <div>
+                                    {venue.meta.wifi ? (
+                                        <img
+                                            src="/img/wifi.svg"
+                                            alt="wifi icon"
+                                            className="h-4 opacity-80"
+                                            title="Wifi available!"
+                                        />
+                                    ) : (
+                                        <>
+                                            <img
+                                                src="/img/nowifi.svg"
+                                                alt="wifi icon"
+                                                className="h-4"
+                                                title="Wifi available!"
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                                <div>
+                                    {venue.meta.pets ? (
+                                        <img
+                                            src="/img/pets.svg"
+                                            alt="pets icon"
+                                            className="h-4 opacity-80"
+                                            title="Pets welcome!"
+                                        />
+                                    ) : (
+                                        <>
+                                            <img
+                                                src="/img/nopets.svg"
+                                                alt="pets icon"
+                                                className="h-4"
+                                                title="Pets welcome!"
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                                <div>
+                                    {venue.meta.breakfast ? (
+                                        <img
+                                            src="/img/breakfast.svg"
+                                            alt="breakfast icon"
+                                            className="h-4 opacity-80"
+                                            title="Breakfast available!"
+                                        />
+                                    ) : (
+                                        <>
+                                            <img
+                                                src="/img/nobreakfast.svg"
+                                                alt="breakfast icon"
+                                                className="h-4"
+                                                title="Breakfast available!"
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                                <div>
+                                    {venue.meta.parking ? (
+                                        <img
+                                            src="/img/parking.svg"
+                                            alt="parking icon"
+                                            className="h-4 opacity-80"
+                                            title="Parking available!"
+                                        />
+                                    ) : (
+                                        <img
+                                            src="/img/noparking.svg"
+                                            alt="parking icon"
+                                            className="h-4"
+                                            title="Parking available!"
+                                        />
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
