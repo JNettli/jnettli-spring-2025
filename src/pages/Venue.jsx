@@ -128,7 +128,7 @@ function Venue() {
             toast.success("Booking updated successfully");
             window.location.reload();
         } catch (error) {
-            toast.error("Error updating booking");
+            toast.error(error.message || "Error updating booking");
             console.error(error);
         }
     }
@@ -169,11 +169,11 @@ function Venue() {
                     <img
                         src={venue.media[mainImageIndex]?.url}
                         alt={venue.media[mainImageIndex]?.alt}
-                        className="h-128 object-cover lg:w-2/3 md:w-4/5 w-full shadow-md rounded-xl"
+                        className="lg:h-128 md:h-96 h-64 object-cover lg:w-2/3 md:w-4/5 w-full shadow-md rounded-xl"
                     />
                     {venue.media?.length > 1 && (
                         <div className="flex lg:flex-col flex-row flex-wrap gap-2 lg:w-20 w-full justify-center">
-                            <div className="flex gap-2 flex-wrap">
+                            <div className="flex gap-2 flex-wrap justify-center">
                                 {venue.media.map((image, index) => (
                                     <img
                                         key={index}
@@ -197,13 +197,13 @@ function Venue() {
 
             <div className="border-b border-slate-900/20 my-4 w-4/5"></div>
             <div className="flex w-full max-w-5xl lg:justify-around gap-4 lg:items-start items-center mt-4 lg:flex-row flex-col">
-                <div className="lg:w-2/3 w-full space-y-6 px-4">
+                <div className="lg:w-2/3 w-full flex flex-col gap-6">
                     <h1 className="text-center font-bold text-4xl text-[#088D9A] w-full truncate">
                         {venue.name}
                     </h1>
                     <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
 
-                    <div>
+                    <div className="lg:px-0 px-8">
                         <h2 className="text-2xl font-semibold text-slate-800 mb-2">
                             About This Place
                         </h2>
@@ -222,7 +222,7 @@ function Venue() {
                                     }
                                     className="cursor-pointer relative w-fit left-1/2 -translate-x-1/2 top-3"
                                 >
-                                    <p className="text-slate-700 bg-white mx-auto px-1">
+                                    <p className="text-slate-700 bg-slate-50 mx-auto px-1">
                                         {showFullDesc
                                             ? "Show less"
                                             : "Show more"}
@@ -249,7 +249,7 @@ function Venue() {
                     </div>
 
                     <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
-                    <div>
+                    <div className="lg:px-0 px-8">
                         <h3 className="text-lg font-semibold text-slate-800 mb-1">
                             Amenities
                         </h3>
@@ -277,20 +277,20 @@ function Venue() {
                         </div>
                     </div>
 
-                    <div className="rounded-xl border border-slate-900/10 shadow-md p-4 flex flex-col w-full max-w-5xl justify-between mt-8">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-2 bg-white relative -top-8 w-fit px-1">
+                    <div className="rounded-xl border border-slate-900/10 shadow-md p-4 flex flex-col w-full max-w-full justify-between mt-8">
+                        <h3 className="text-lg font-semibold text-slate-800 mb-2 bg-slate-50 relative -top-8 w-fit px-1">
                             Location
                         </h3>
-                        <div className="flex justify-between -mt-10 mb-4">
+                        <div className="flex justify-between -mt-10 mb-4 truncate">
                             <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
-                                <div className="text-slate-700">
+                                <div className="text-slate-700 truncate">
                                     <p className="font-semibold text-lg">
                                         Address:
                                     </p>{" "}
                                     {venue.location.address || "Not available"}
                                 </div>
                                 <div className="border-r border-slate-900/50 md:block hidden"></div>
-                                <div className="text-slate-700">
+                                <div className="text-slate-700 truncate">
                                     <p className="font-semibold text-lg">
                                         City:
                                     </p>{" "}
@@ -299,14 +299,14 @@ function Venue() {
                             </div>
                             <div className="border-r border-slate-900/50"></div>
                             <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
-                                <div className="text-slate-700">
+                                <div className="text-slate-700 truncate">
                                     <p className="font-semibold text-lg">
                                         Country:
                                     </p>{" "}
                                     {venue.location.country || "Not available"}
                                 </div>
                                 <div className="border-r border-slate-900/50 md:block hidden"></div>
-                                <div className="text-slate-700">
+                                <div className="text-slate-700 truncate">
                                     <p className="font-semibold text-lg">
                                         Zip code:
                                     </p>{" "}
@@ -339,7 +339,7 @@ function Venue() {
                             className="h-20 w-20 rounded-full object-cover border-4 border-[#088D9A]"
                         />
                     </div>
-                    <div className="flex flex-col bg-white lg:shadow-lg rounded-xl lg:p-4 w-full max-w-screen">
+                    <div className="flex flex-col bg-white shadow-lg rounded-xl lg:p-4 py-4 w-full max-w-screen">
                         <h2 className="text-xl mb-2 text-center">
                             <p className="inline font-semibold text-[#088D9A]">
                                 ${venue.price}
@@ -410,7 +410,7 @@ function Venue() {
                             <div className="lg:border-0 border-b border-slate-900/50 w-4/5"></div>
                             <Link
                                 to={`/venues/edit/${venueId}`}
-                                className="text-white p-2 text-center bg-[#088D9A] hover:bg-[#077d89] rounded w-2/3 cursor-pointer transition duration-150"
+                                className="text-white p-2 lg:-mt-8 text-center bg-[#088D9A] hover:bg-[#077d89] rounded w-2/3 cursor-pointer transition duration-150"
                             >
                                 Edit Venue
                             </Link>

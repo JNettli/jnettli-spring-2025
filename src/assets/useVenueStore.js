@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { APIVenues } from "../assets/Constants";
 
 export const useVenueStore = create(
     persist(
@@ -8,11 +9,14 @@ export const useVenueStore = create(
             isLoaded: false,
             searchQuery: "",
             isSearchMode: false,
+
             setVenues: (venues) => set({ venues }),
             setIsLoaded: (loaded) => set({ isLoaded: loaded }),
             setSearchQuery: (q) => set({ searchQuery: q }),
             setIsSearchMode: (val) => set({ isSearchMode: val }),
+
             clearSearch: () => set({ searchQuery: "", isSearchMode: false }),
+
             searchVenues: (query) => {
                 const q = query.toLowerCase();
                 return get().venues.filter(
@@ -24,20 +28,24 @@ export const useVenueStore = create(
                         venue.description?.toLowerCase().includes(q)
                 );
             },
+
             filters: {
                 wifi: undefined,
                 parking: undefined,
                 pets: undefined,
                 breakfast: undefined,
             },
+
             pendingFilters: {
                 wifi: undefined,
                 parking: undefined,
                 pets: undefined,
                 breakfast: undefined,
             },
+
             setFilters: (newFilters) => set({ filters: newFilters }),
             setPendingFilters: (pending) => set({ pendingFilters: pending }),
+
             resetFilters: () =>
                 set({
                     filters: {
@@ -61,16 +69,50 @@ export const useVenueStore = create(
                         sort: undefined,
                     },
                 }),
+
             applyFilters: () =>
                 set((state) => ({
                     filters: { ...state.pendingFilters },
                 })),
+
+            fetchAllVenues: async () => {
+                try {
+                    let allVenues = [];
+                    let currentPage = 1;
+                    let keepFetching = true;
+
+                    while (keepFetching) {
+                        const res = await fetch(
+                            `${APIVenues}?_owner=true&_bookings=true&sort=rating&limit=100&page=${currentPage}`
+                        );
+                        const data = await res.json();
+                        const venues = data.data;
+
+                        if (venues.length === 0) {
+                            keepFetching = false;
+                        } else {
+                            allVenues = [...allVenues, ...venues];
+                            currentPage++;
+                        }
+                    }
+
+                    set({ venues: allVenues, isLoaded: true });
+                } catch (error) {
+                    console.error("Failed to fetch all venues:", error);
+                }
+            },
+
+            refreshVenueStore: async () => {
+                await get().fetchAllVenues();
+            },
         }),
         {
             name: "venue-storage",
             partialize: (state) => ({
                 venues: state.venues,
                 isLoaded: state.isLoaded,
+                searchQuery: state.searchQuery,
+                isSearchMode: state.isSearchMode,
             }),
         }
     )

@@ -9,8 +9,10 @@ const customMarkerIcon = new L.Icon({
     iconAnchor: [20, 40],
 });
 
-const MapPicker = ({ onLocationSelect }) => {
-    const [markerPosition, setMarkerPosition] = useState(null);
+const MapPicker = ({ onLocationSelect, initialLat = 52, initialLng = 8 }) => {
+    const [markerPosition, setMarkerPosition] = useState(
+        initialLat && initialLng ? [initialLat, initialLng] : null
+    );
 
     const getAddress = async (lat, lng) => {
         try {

@@ -30,7 +30,8 @@ function App() {
     const [page, setPage] = useState(1);
     const [scrollTop, setScrollTop] = useState(false);
     const [searchParams] = useSearchParams();
-    const limit = 20;
+
+    const limit = 100;
 
     const urlQuery = searchParams.get("q");
 
@@ -71,7 +72,7 @@ function App() {
     }, [setVenues, setIsLoaded]);
 
     const fetchRemainingVenues = useCallback(async () => {
-        if (isLoaded || venues.length >= limit * 2) return;
+        if (isLoaded) return;
 
         let currentPage = 2;
         let allFetched = [...venues];
@@ -79,7 +80,7 @@ function App() {
         try {
             while (true) {
                 const res = await fetch(
-                    `${APIVenues}?limit=${limit}&page=${currentPage}&sort=rating`
+                    `${APIVenues}?_owner=true&_bookings=true&limit=${limit}&page=${currentPage}`
                 );
                 const data = await res.json();
                 const newData = data.data;
@@ -96,7 +97,7 @@ function App() {
             setIsLoaded(true);
         } catch (err) {
             console.error("Error loading full venue list:", err);
-            toast.error("Error loading full venue list:", err);
+            toast.error("Error loading full venue list");
         }
     }, [venues, setVenues, isLoaded, setIsLoaded]);
 
@@ -112,22 +113,22 @@ function App() {
             filtered = venues.filter((venue) => {
                 if (
                     filters.wifi !== undefined &&
-                    venue.meta.wifi !== filters.wifi
+                    venue.meta?.wifi !== filters.wifi
                 )
                     return false;
                 if (
                     filters.parking !== undefined &&
-                    venue.meta.parking !== filters.parking
+                    venue.meta?.parking !== filters.parking
                 )
                     return false;
                 if (
                     filters.pets !== undefined &&
-                    venue.meta.pets !== filters.pets
+                    venue.meta?.pets !== filters.pets
                 )
                     return false;
                 if (
                     filters.breakfast !== undefined &&
-                    venue.meta.breakfast !== filters.breakfast
+                    venue.meta?.breakfast !== filters.breakfast
                 )
                     return false;
                 if (
@@ -224,17 +225,17 @@ function App() {
         }
     }, [inView, hasMore, loading, loadMoreVenues]);
 
+    const refreshVenueStore = useVenueStore((state) => state.refreshVenueStore);
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        const intervalId = setInterval(async () => {
             if (document.visibilityState === "visible") {
-                console.log("Auto-refreshing venue data...");
-                fetchInitialVenues();
-                fetchRemainingVenues();
+                console.log("Auto-refreshing venue data..."); // Please don't dock me for this console log :) I like to see when this happens <3
+                await refreshVenueStore();
             }
-        }, 120000);
+        }, 10000);
 
         return () => clearInterval(intervalId);
-    }, [fetchInitialVenues, fetchRemainingVenues]);
+    }, [refreshVenueStore]);
 
     return (
         <>
