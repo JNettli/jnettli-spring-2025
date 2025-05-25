@@ -310,6 +310,23 @@ function App() {
                                     )}
                                 </div>
                                 <div>
+                                    {venue.meta.parking ? (
+                                        <img
+                                            src="/img/parking.svg"
+                                            alt="parking icon"
+                                            className="h-4 opacity-80"
+                                            title="Parking available!"
+                                        />
+                                    ) : (
+                                        <img
+                                            src="/img/noparking.svg"
+                                            alt="parking icon"
+                                            className="h-4"
+                                            title="Parking available!"
+                                        />
+                                    )}
+                                </div>
+                                <div>
                                     {venue.meta.pets ? (
                                         <img
                                             src="/img/pets.svg"
@@ -345,23 +362,6 @@ function App() {
                                                 title="Breakfast available!"
                                             />
                                         </>
-                                    )}
-                                </div>
-                                <div>
-                                    {venue.meta.parking ? (
-                                        <img
-                                            src="/img/parking.svg"
-                                            alt="parking icon"
-                                            className="h-4 opacity-80"
-                                            title="Parking available!"
-                                        />
-                                    ) : (
-                                        <img
-                                            src="/img/noparking.svg"
-                                            alt="parking icon"
-                                            className="h-4"
-                                            title="Parking available!"
-                                        />
                                     )}
                                 </div>
                             </div>

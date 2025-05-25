@@ -97,7 +97,7 @@ export default function LoginModal() {
                 closeModal();
                 setTimeout(() => {
                     window.location.href = "/";
-                }, 5000);
+                }, 2000);
             } catch (error) {
                 toast.error(getErrorMessage(error));
                 console.error("Login failed.", error);
