@@ -7,6 +7,7 @@ import {
     forwardRef,
     useImperativeHandle,
 } from "react";
+import debounce from "lodash.debounce";
 
 const SearchBar = forwardRef((_, externalRef) => {
     const [input, setInput] = useState("");
@@ -19,14 +20,47 @@ const SearchBar = forwardRef((_, externalRef) => {
 
     const wrapperRef = useRef();
     const inputRef = useRef();
+    const debouncedUpdateSuggestions = useRef();
 
     useImperativeHandle(externalRef, () => ({
         focus: () => inputRef.current?.focus(),
     }));
 
+    if (!debouncedUpdateSuggestions.current) {
+        debouncedUpdateSuggestions.current = debounce((value) => {
+            const matches = venues.filter((v) =>
+                v.name.toLowerCase().includes(value)
+            );
+            const sliced = matches.slice(0, 20);
+
+            setSuggestions(sliced);
+            setShowDropdown(sliced.length > 0);
+            setHighlightIndex(-1);
+        }, 150);
+    }
+
+    useEffect(() => {
+        const trimmedInput = input.trim().toLowerCase();
+
+        setSuggestions([]);
+        setHighlightIndex(-1);
+
+        if (trimmedInput === "") {
+            debouncedUpdateSuggestions.current.cancel();
+            return;
+        }
+
+        debouncedUpdateSuggestions.current(trimmedInput);
+
+        return () => {
+            debouncedUpdateSuggestions.current.cancel();
+        };
+    }, [input, venues]);
+
     const handleSearch = (e) => {
         e.preventDefault();
         if (input.trim() === "") return;
+
         if (highlightIndex >= 0 && suggestions[highlightIndex]) {
             handleSelectSuggestion(suggestions[highlightIndex].id);
         } else {
@@ -37,6 +71,7 @@ const SearchBar = forwardRef((_, externalRef) => {
                 search: createSearchParams({ q: input.trim() }).toString(),
             });
         }
+
         setShowDropdown(false);
     };
 
@@ -45,23 +80,6 @@ const SearchBar = forwardRef((_, externalRef) => {
         setShowDropdown(false);
         navigate(`/venue/${venueId}`);
     };
-
-    useEffect(() => {
-        if (input.trim().length === 0) {
-            setSuggestions([]);
-            setShowDropdown(false);
-            return;
-        }
-
-        const lower = input.toLowerCase();
-        const matches = venues
-            .filter((v) => v.name.toLowerCase().includes(lower))
-            .slice(0, 20);
-
-        setSuggestions(matches);
-        setShowDropdown(matches.length > 0);
-        setHighlightIndex(-1);
-    }, [input, venues]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -122,14 +140,28 @@ const SearchBar = forwardRef((_, externalRef) => {
                     />
                 </button>
             </form>
+
             {showDropdown && (
                 <>
-                    <div className="bg-white border border-slate-900/50 border-b-0 w-full h-14 -mt-12 -mb-2 rounded-t-3xl"></div>
-                    <ul className="absolute left-0 right-0 top-full w-full max-h-80 overflow-y-auto bg-white border border-slate-900/50 border-t-0 rounded-b-xl shadow z-[101]">
-                        {suggestions.map((venue, index) => (
-                            <div key={venue.id}>
-                                <div className="border-t w-9/10 mx-auto border-slate-900/20"></div>
+                    <div
+                        className={`bg-white border border-slate-900/20 border-b-0 w-full h-14 -mt-12 -mb-2 rounded-t-3xl ${
+                            suggestions.length == 0 ? "opacity-0" : ""
+                        }`}
+                    ></div>
+                    <div
+                        className={`
+        absolute left-0 right-0 top-full w-full overflow-hidden transition-all duration-300 
+        ${
+            suggestions.length > 0
+                ? "max-h-96 border border-slate-900/20 rounded-b-xl shadow z-[101] bg-white"
+                : "max-h-0"
+        }
+    `}
+                    >
+                        <ul className="divide-y divide-slate-200">
+                            {suggestions.map((venue, index) => (
                                 <li
+                                    key={venue.id}
                                     ref={(element) => {
                                         if (
                                             index === highlightIndex &&
@@ -144,7 +176,7 @@ const SearchBar = forwardRef((_, externalRef) => {
                                     onClick={() =>
                                         handleSelectSuggestion(venue.id)
                                     }
-                                    className={`py-2 px-4 cursor-pointer overflow-x-hidden ${
+                                    className={`py-2 px-4 cursor-pointer overflow-x-hidden transition-colors duration-150 ${
                                         index === highlightIndex
                                             ? "bg-[#088D9A] text-white"
                                             : "hover:bg-[#088D9A] hover:text-white"
@@ -176,9 +208,9 @@ const SearchBar = forwardRef((_, externalRef) => {
                                         />
                                     </div>
                                 </li>
-                            </div>
-                        ))}
-                    </ul>
+                            ))}
+                        </ul>
+                    </div>
                 </>
             )}
         </div>

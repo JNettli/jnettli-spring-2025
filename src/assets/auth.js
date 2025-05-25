@@ -52,5 +52,7 @@ export function logout() {
     localStorage.removeItem("userName");
     localStorage.removeItem("userImage");
     localStorage.removeItem("venueManager");
-    window.location.href = "/";
+    setTimeout(() => {
+        window.location.href = "/";
+    }, 2000);
 }

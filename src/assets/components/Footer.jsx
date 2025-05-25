@@ -19,11 +19,11 @@ function Footer() {
             <img
                 src="/img/holidaze.svg"
                 alt="Holidaze Logo"
-                className="h-10 absolute left-1/2 -ml-[20px]"
+                className="h-10 absolute left-1/2 -ml-[20px] sm:block hidden"
             />
             <Link
                 to={"/about"}
-                className="logo text-md text-[#088D9A] hover:scale-110 transition duration-150 my-auto"
+                className="logo text-xl text-[#088D9A] hover:scale-110 transition duration-150 my-auto"
             >
                 About Us
             </Link>

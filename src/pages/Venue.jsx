@@ -166,11 +166,20 @@ function Venue() {
             <ToastContainer position="top-center" autoClose={3000} />
             <div className="w-full">
                 <div className="w-full flex lg:flex-row flex-col items-center gap-2 justify-center">
-                    <img
-                        src={venue.media[mainImageIndex]?.url}
-                        alt={venue.media[mainImageIndex]?.alt}
-                        className="lg:h-128 md:h-96 h-64 object-cover lg:w-2/3 md:w-4/5 w-full shadow-md rounded-xl"
-                    />
+                    <div className="overflow-hidden rounded-xl shadow-md bg-slate-50 lg:max-w-2/3 md:max-w-4/5 w-fit lg:max-h-[632px] md:max-h-96 max-h-64 h-fit flex items-center justify-center">
+                        <a
+                            href={venue.media[mainImageIndex]?.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img
+                                src={venue.media[mainImageIndex]?.url}
+                                alt={venue.media[mainImageIndex]?.alt}
+                                className="h-full w-full max-h-full max-w-full object-contain cursor-pointer"
+                            />
+                        </a>
+                    </div>
+
                     {venue.media?.length > 1 && (
                         <div className="flex lg:flex-col flex-row flex-wrap gap-2 lg:w-20 w-full justify-center">
                             <div className="flex gap-2 flex-wrap justify-center">

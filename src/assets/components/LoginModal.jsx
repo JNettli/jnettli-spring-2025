@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
-import { login, logout } from "../auth";
+import { useState, useEffect, useCallback } from "react";
+import { login } from "../auth";
 import { register } from "../auth";
-import { isLoggedIn } from "./functions";
 import { toast, ToastContainer } from "react-toastify";
 
-export default function LoginModal() {
-    const [isOpen, setIsOpen] = useState(false);
+export default function LoginModal({ isOpen, onClose }) {
     const [fade, setFade] = useState(false);
     const [isRegister, setIsRegister] = useState(false);
     const [userName, setUserName] = useState("");
@@ -23,6 +21,11 @@ export default function LoginModal() {
         }
     }, [isOpen]);
 
+    const closeModal = useCallback(() => {
+        setFade(false);
+        setTimeout(() => onClose(), 200);
+    }, [onClose]);
+
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === "Escape") {
@@ -37,12 +40,7 @@ export default function LoginModal() {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [isOpen]);
-
-    const closeModal = () => {
-        setFade(false);
-        setTimeout(() => setIsOpen(false), 200);
-    };
+    }, [isOpen, closeModal]);
 
     const getPasswordScore = (password) => {
         let score = 0;
@@ -88,15 +86,10 @@ export default function LoginModal() {
         } else {
             try {
                 await login(email, password);
-                toast.success(
-                    <>
-                        Login Successful! <br />
-                        Logging you in, please wait...
-                    </>
-                );
-                closeModal();
+                toast.success("Logging you in, please wait...");
                 setTimeout(() => {
-                    window.location.href = "/";
+                    closeModal();
+                    window.location.reload();
                 }, 2000);
             } catch (error) {
                 toast.error(getErrorMessage(error));
@@ -105,31 +98,11 @@ export default function LoginModal() {
         }
     };
 
-    const isAuth = isLoggedIn();
+    if (!isOpen) return null;
 
     return (
         <>
             <ToastContainer position="top-center" autoClose={3000} />
-            <button
-                onClick={() => (isAuth ? logout() : setIsOpen(true))}
-                className="transition hover:cursor-pointer"
-            >
-                {isAuth ? (
-                    <img
-                        src="/img/logout.svg"
-                        alt="Logout"
-                        className="h-11 w-11"
-                        title="Logout"
-                    />
-                ) : (
-                    <img
-                        src="/img/login.svg"
-                        alt="Login"
-                        className="h-11 w-11"
-                        title="Login"
-                    />
-                )}
-            </button>
 
             {isOpen && (
                 <div

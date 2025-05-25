@@ -106,9 +106,13 @@ function App() {
 
         if (isSearchMode && searchQuery.trim() !== "") {
             const query = searchQuery.toLowerCase();
-            filtered = venues.filter((venue) =>
-                venue.name.toLowerCase().includes(query)
-            );
+            filtered = venues.filter((venue) => {
+                return (
+                    venue.name.toLowerCase().includes(query) ||
+                    venue.location?.city?.toLowerCase().includes(query) ||
+                    venue.location?.country?.toLowerCase().includes(query)
+                );
+            });
         } else {
             filtered = venues.filter((venue) => {
                 if (
@@ -208,6 +212,7 @@ function App() {
     }, [filters, venues, applyFiltersToVenues]);
 
     useEffect(() => {
+        if (!isLoaded) return;
         if (isSearchMode && searchQuery) {
             const results = searchVenues(searchQuery);
             setFilteredVenues(results);
@@ -217,7 +222,14 @@ function App() {
         } else {
             applyFiltersToVenues();
         }
-    }, [isSearchMode, searchQuery, venues, applyFiltersToVenues, searchVenues]);
+    }, [
+        isLoaded,
+        isSearchMode,
+        searchQuery,
+        venues,
+        applyFiltersToVenues,
+        searchVenues,
+    ]);
 
     useEffect(() => {
         if (inView && hasMore && !loading) {
@@ -232,46 +244,45 @@ function App() {
                 console.log("Auto-refreshing venue data..."); // Please don't dock me for this console log :) I like to see when this happens <3
                 await refreshVenueStore();
             }
-        }, 10000);
+        }, 120000);
 
         return () => clearInterval(intervalId);
     }, [refreshVenueStore]);
-
     return (
         <>
             <div className="max-w-7xl mx-auto p-4">
                 <ToastContainer position="top-center" autoClose={3000} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {displayedVenues.map((venue) => (
-                        <div
+                        <Link
                             key={venue.id}
-                            className="bg-white shadow hover:shadow-lg transition duration-150 rounded-lg p-4"
+                            to={`/venue/${venue.id}`}
+                            className="bg-white shadow hover:shadow-lg transition duration-150 rounded-lg truncate"
                         >
-                            <Link to={`/venue/${venue.id}`}>
+                            <div>
                                 <img
                                     src={
                                         venue.media[0]?.url ||
-                                        "img/error-image.svg"
+                                        "/img/error-image.png"
                                     }
                                     alt={venue.media[0]?.alt || "Missing alt"}
-                                    className="w-full h-40 object-cover rounded"
+                                    className="w-full h-40 object-cover rounded-t mb-1"
                                     onError={(e) =>
-                                        (e.target.src = "img/error-image.svg")
+                                        (e.target.src = "img/error-image.png")
                                     }
                                 />
-                            </Link>
-                            <Link
-                                to={`/venue/${venue.id}`}
-                                className="font-bold text-[#088D9A] truncate"
-                            >
-                                {venue.name}
-                            </Link>
+                            </div>
+                            <div>
+                                <p className="font-bold text-[#088D9A] px-2 truncate">
+                                    {venue.name}
+                                </p>
+                            </div>
 
-                            <p className="text-slate-500 text-sm truncate">
+                            <p className="text-slate-500 text-sm px-2 truncate">
                                 {venue.location?.city},{" "}
                                 {venue.location?.country}
                             </p>
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between px-2 items-center">
                                 <div className="flex items-center gap-1">
                                     <p
                                         className="text-slate-700 font-bold"
@@ -285,11 +296,16 @@ function App() {
                                         className="h-4 w-4 inline"
                                     />
                                 </div>
-                                <p className="text-slate-700 font-bold">
-                                    $ {venue.price}
-                                </p>
+                                <div className="flex">
+                                    <p className="text-slate-700 font-bold">
+                                        $ {venue.price} /
+                                    </p>
+                                    <p className="text-sm font-semibold text-slate-500 my-auto ml-1">
+                                        Night
+                                    </p>
+                                </div>
                             </div>
-                            <div className="flex justify-center gap-4 border-t border-t-slate-900/20 pt-2 -mb-2 relative">
+                            <div className="flex justify-center gap-4 w-3/5 mx-auto border-t border-t-slate-900/20 p-2 relative">
                                 <div>
                                     {venue.meta.wifi ? (
                                         <img
@@ -365,7 +381,7 @@ function App() {
                                     )}
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 

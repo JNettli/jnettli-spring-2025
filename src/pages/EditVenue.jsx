@@ -335,7 +335,7 @@ function EditVenue() {
                         <button
                             type="button"
                             onClick={addMediaInput}
-                            className={`mt-2 px-4 py-2 rounded w-64 mx-auto ${
+                            className={`mt-2 px-4 py-2 rounded w-48 mx-auto ${
                                 formData.media.length >= 8
                                     ? "bg-gray-400 cursor-not-allowed"
                                     : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
