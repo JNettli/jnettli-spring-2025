@@ -36,7 +36,6 @@ export async function register(name, email, password, userType) {
         },
         body: JSON.stringify({ name, email, password, userType }),
     });
-    console.log(JSON.stringify({ name, email, password, userType }));
     if (registerResponse.ok) {
         alert("Registration successful! Please login to continue.");
     } else {

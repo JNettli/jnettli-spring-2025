@@ -7,6 +7,12 @@ import { ToastContainer, toast } from "react-toastify";
 function EditProfile() {
     const profileId = localStorage.getItem("userName");
     const navigate = useNavigate();
+    useEffect(() => {
+        if (!profileId) {
+            toast.info("You need to be logged in to view this page!");
+            navigate("/");
+        }
+    });
     const [formData, setFormData] = useState({
         bio: "",
         name: "",
@@ -122,8 +128,9 @@ function EditProfile() {
                 <Link
                     to={`/venue/${formData.id}`}
                     className="text-[#088D9A] hover:underline text-sm w-fit"
+                    aria-label="Go back to the profile"
                 >
-                    ← Back to Venue
+                    ← Back to Profile
                 </Link>
                 <h2 className="text-3xl text-[#088D9A] mt-2 font-semibold">
                     Edit Profile

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { checkLogin } from "../assets/components/functions";
+import { useState, useEffect } from "react";
 import { APIVenues } from "../assets/Constants";
 import { Link, useNavigate } from "react-router-dom";
 import { MapPicker } from "../assets/components/Map";
@@ -11,11 +10,15 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 function CreateVenue() {
-    checkLogin();
-
     const navigate = useNavigate();
     const { refreshVenueStore } = useVenueStore();
     const profileId = localStorage.getItem("userName");
+    useEffect(() => {
+        if (!profileId) {
+            toast.info("You need to be logged in to view this page!");
+            navigate("/");
+        }
+    });
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -191,6 +194,7 @@ function CreateVenue() {
                 <Link
                     to={`/profile/${profileId}`}
                     className="text-[#088D9A] hover:underline text-sm"
+                    aria-label="Go back to your profile"
                 >
                     ← Back to Profile
                 </Link>

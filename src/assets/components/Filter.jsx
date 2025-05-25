@@ -67,6 +67,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                                         key={key}
                                         onClick={() => handleToggle(key)}
                                         className="flex justify-between items-center gap-2 border border-gray-300 rounded px-3 py-2 hover:bg-gray-100 transition cursor-pointer"
+                                        aria-label="Filters"
                                     >
                                         <span className="capitalize">
                                             {key}
@@ -105,6 +106,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                             setIsOpen(false);
                         }}
                         className="bg-[#088D9A] text-white px-4 py-2 rounded hover:bg-[#077d89] cursor-pointer transition duration-150"
+                        aria-label="Click to apply filters"
                     >
                         Apply Filters
                     </button>
@@ -114,6 +116,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                             setIsOpen(false);
                         }}
                         className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 cursor-pointer transition duration-150"
+                        aria-label="Click to clear filters"
                     >
                         Clear Filters
                     </button>
@@ -125,6 +128,7 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                 <button
                     onClick={toggleFilters}
                     className="bg-[#088D9A] text-white px-4 w-32 py-2 rounded hover:bg-[#077d89] cursor-pointer transition duration-150"
+                    aria-label="Click to show/hide filters"
                 >
                     {isOpen ? "Hide Filters" : "Show Filters"}
                 </button>

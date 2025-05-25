@@ -1,8 +1,24 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 function Success() {
     const { state } = useLocation();
-    document.title = `You've booked ${state.venue}! | Holidaze`;
+    const profileId = localStorage.getItem("userName");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!profileId) {
+            toast.info("You need to be logged in to view this page!");
+            navigate("/");
+        }
+    });
+
+    if (!state) {
+        document.title = "Something went wrong here..";
+    } else {
+        document.title = `You've booked ${state.venue}! | Holidaze`;
+    }
 
     if (!state) {
         return (
@@ -10,7 +26,11 @@ function Success() {
                 <h1 className="text-2xl font-semibold">
                     No booking data found.
                 </h1>
-                <Link to={"/"} className="underline pt-4">
+                <Link
+                    to={"/"}
+                    className="underline pt-4"
+                    aria-label="Go back to home page"
+                >
                     Back to Home
                 </Link>
             </div>
@@ -35,6 +55,7 @@ function Success() {
                             <Link
                                 to={"/"}
                                 className="flex justify-center mb-8 text-lg font-semibold bg-[#088D9A] border-[#088D9A] border transition duration-150 text-white rounded-full p-4 hover:bg-white hover:text-black"
+                                aria-label="Go back to home page"
                             >
                                 Back to home page!
                             </Link>

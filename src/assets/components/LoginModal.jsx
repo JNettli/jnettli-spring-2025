@@ -122,6 +122,7 @@ export default function LoginModal({ isOpen, onClose }) {
                         <button
                             onClick={closeModal}
                             className="absolute top-2 right-3 text-gray-500 hover:text-red-600 text-3xl font-bold hover:cursor-pointer"
+                            aria-label="Close Modal"
                         >
                             &times;
                         </button>
@@ -251,6 +252,7 @@ export default function LoginModal({ isOpen, onClose }) {
                             <button
                                 type="submit"
                                 className="w-full bg-[#007A8D] text-white py-2 rounded-md hover:bg-[#006473] transition hover:cursor-pointer"
+                                aria-label="Submit form"
                             >
                                 {isRegister ? "Register" : "Sign In"}
                             </button>
@@ -263,6 +265,7 @@ export default function LoginModal({ isOpen, onClose }) {
                                     <button
                                         className="text-[#007A8D] hover:underline hover:cursor-pointer"
                                         onClick={() => setIsRegister(false)}
+                                        aria-label="Go to login form"
                                     >
                                         Login
                                     </button>
@@ -273,6 +276,7 @@ export default function LoginModal({ isOpen, onClose }) {
                                     <button
                                         className="text-[#007A8D] hover:underline hover:cursor-pointer"
                                         onClick={() => setIsRegister(true)}
+                                        aria-label="Go to register form"
                                     >
                                         Register
                                     </button>

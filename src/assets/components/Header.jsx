@@ -77,7 +77,10 @@ function Header() {
 
                     {!loggedIn && (
                         <div className="w-11 h-11 md:block hidden">
-                            <button onClick={() => setShowLoginModal(true)}>
+                            <button
+                                onClick={() => setShowLoginModal(true)}
+                                aria-label="Open Login"
+                            >
                                 <img
                                     src="/img/login.svg"
                                     alt="Login"
@@ -97,6 +100,7 @@ function Header() {
                                 logout();
                             }}
                             className="cursor-pointer md:flex hidden"
+                            aria-label="Click to Log out"
                         >
                             <img
                                 src="/img/logout.svg"
@@ -112,6 +116,7 @@ function Header() {
                     <button
                         className="md:hidden ml-4"
                         onClick={() => setMenuOpen(!menuOpen)}
+                        aria-label="Opens sidebar menu on mobile"
                     >
                         <img
                             src="/img/hamburger.svg"
@@ -144,6 +149,7 @@ function Header() {
                         className={`relative -left-10 top-0 bg-slate-50 text-red-600 hover:text-red-800 hover:shadow-lg transition duration-150 cursor-pointer h-10 w-10 text-2xl font-black z-50 rounded-bl-lg -mb-10 ${
                             !menuOpen ? "opacity-0" : "opacity-100"
                         }`}
+                        aria-label="Close sidebar menu"
                     >
                         ✕
                     </button>
@@ -187,6 +193,7 @@ function Header() {
                             }
                         }}
                         className="flex cursor-pointer bg-white shadow-md w-full hover:shadow-lg transition duration-150"
+                        aria-label="Click to Login/Logout"
                     >
                         <img
                             src={

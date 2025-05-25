@@ -4,6 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { APIVenues } from "./assets/Constants";
 import { useVenueStore } from "./assets/useVenueStore";
 import { toast, ToastContainer } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 function App() {
     document.title = "Holidaze | Find your new vacation spot";
@@ -250,6 +251,30 @@ function App() {
     }, [refreshVenueStore]);
     return (
         <>
+            <Helmet>
+                <meta
+                    name="description"
+                    content="Browse amazing venues around the world. Find your next adventure, getaway, or relaxing stay."
+                />
+                <meta
+                    name="keywords"
+                    content="travel, venues, booking, adventure, getaway, vacation, holiday, Holidaze"
+                />
+                <meta name="author" content="JNettli" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0"
+                />
+                <meta
+                    property="og:title"
+                    content="Holidaze – Browse All Venues"
+                />
+                <meta
+                    property="og:description"
+                    content="Discover a wide variety of vacation venues from around the globe. Book your dream stay with Holidaze."
+                />
+                <meta property="og:image" content={"/img/holidaze.svg"} />
+            </Helmet>
             <div className="max-w-7xl mx-auto p-4">
                 <ToastContainer position="top-center" autoClose={3000} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -258,6 +283,7 @@ function App() {
                             key={venue.id}
                             to={`/venue/${venue.id}`}
                             className="bg-white shadow hover:shadow-lg transition duration-150 rounded-lg truncate"
+                            aria-label="Go to this venue"
                         >
                             <div>
                                 <img

@@ -11,7 +11,12 @@ function Footer() {
     };
     return (
         <footer className="flex justify-between border-t border-t-slate-900/50 bg-slate-50 p-8 pb-12">
-            <Link to={"/"} onClick={handleReset} className="flex">
+            <Link
+                to={"/"}
+                onClick={handleReset}
+                className="flex"
+                aria-label="Go to home page"
+            >
                 <p className="text-[#088D9A] m-auto ml-2 text-xl logo hover:scale-110 transition duration-150">
                     &copy; Holidaze
                 </p>
@@ -24,6 +29,7 @@ function Footer() {
             <Link
                 to={"/about"}
                 className="logo text-xl text-[#088D9A] hover:scale-110 transition duration-150 my-auto"
+                aria-label="Go to About Us page"
             >
                 About Us
             </Link>

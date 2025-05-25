@@ -1,8 +1,31 @@
+import { Helmet } from "react-helmet-async";
+
 document.title = "About Holidaze";
 
 function About() {
     return (
         <>
+            <Helmet>
+                <meta
+                    name="description"
+                    content="Learn more about Holidaze – your trusted platform for booking incredible stays and experiences."
+                />
+                <meta
+                    name="keywords"
+                    content="about, Holidaze, who we are, mission, travel platform, vacation, booking"
+                />
+                <meta name="author" content="JNettli" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0"
+                />
+                <meta property="og:title" content="About Holidaze" />
+                <meta
+                    property="og:description"
+                    content="We're committed to making your travel dreams a reality. Read about our mission and what drives us."
+                />
+                <meta property="og:image" content={"/img/holidaze.svg"} />
+            </Helmet>
             <div className="max-w-5xl flex mx-auto px-4 pt-8">
                 <div className="mx-8 bg-white rounded-xl shadow-lg px-16 py-4">
                     <h1 className="text-4xl font-bold text-center mb-6 text-[#088D9A]">

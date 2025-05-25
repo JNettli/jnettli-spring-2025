@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { APIProfile } from "../assets/Constants";
 import { APIKEY } from "../assets/auth";
-import { checkLogin, isLoggedIn } from "../assets/components/functions";
+import { isLoggedIn } from "../assets/components/functions";
 import { differenceInCalendarDays } from "date-fns";
+import { toast, ToastContainer } from "react-toastify";
 
 function Profile() {
     const profileId = localStorage.getItem("userName");
@@ -15,12 +16,16 @@ function Profile() {
     const [bookings, setBookings] = useState([]);
     const [bookingsLoading, setBookingsLoading] = useState(true);
     const [view, setView] = useState("venues");
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!profileId) {
-            checkLogin();
+            toast.info("You need to be logged in to view this page!");
+            navigate("/");
         }
+    });
 
+    useEffect(() => {
         async function fetchProfile() {
             try {
                 const res = await fetch(APIProfile + "/" + profileId, {
@@ -115,6 +120,7 @@ function Profile() {
 
     return (
         <div className="flex flex-col items-center px-4 py-8">
+            <ToastContainer position="top-center" autoClose={3000} />
             <div className="flex lg:flex-row flex-col justify-around lg:gap-8">
                 <div className="max-w-screen">
                     <div className="max-w-[360px] rounded-xl bg-white py-8 px-2 shadow-lg mb-12 flex gap-2 relative">
@@ -156,6 +162,7 @@ function Profile() {
                             <Link
                                 to={editProfile}
                                 className="bg-[#088D9A] text-white px-6 py-2 rounded-lg hover:bg-[#97d0d5] hover:text-black transition"
+                                aria-label="Go to edit profile"
                             >
                                 Edit Profile
                             </Link>
@@ -164,6 +171,7 @@ function Profile() {
                             <Link
                                 to="/create"
                                 className="bg-[#97d0d5] text-black px-6 py-2 rounded-lg hover:bg-[#077d89] hover:text-white transition"
+                                aria-label="Go to create new venue"
                             >
                                 Create Venue
                             </Link>
@@ -193,6 +201,7 @@ function Profile() {
                         <Link
                             to={editProfile}
                             className="bg-[#088D9A] text-white px-6 py-2 rounded-lg hover:bg-[#97d0d5] hover:text-black transition"
+                            aria-label="Go to edit profile"
                         >
                             Edit Profile
                         </Link>
@@ -204,6 +213,7 @@ function Profile() {
                         <Link
                             to="/create"
                             className="bg-[#97d0d5] text-black px-6 py-2 rounded-lg hover:bg-[#077d89] hover:text-white transition"
+                            aria-label="Go to create new venue"
                         >
                             Create Venue
                         </Link>
@@ -261,6 +271,7 @@ function Profile() {
                                         to={`/venue/${venue.id}`}
                                         key={venue.id}
                                         className="bg-white rounded-xl shadow hover:shadow-lg transition p-4"
+                                        aria-label="Go to this venue"
                                     >
                                         <img
                                             src={
@@ -311,6 +322,7 @@ function Profile() {
                                             to={`/venue/${booking.venue.id}`}
                                             key={booking.venue.id}
                                             className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col gap-2"
+                                            aria-label="Go to the venue this booking is on"
                                         >
                                             <div>
                                                 <h3 className="text-lg font-semibold truncate">

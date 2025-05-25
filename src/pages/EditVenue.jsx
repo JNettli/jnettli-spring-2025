@@ -5,9 +5,16 @@ import { APIKEY } from "../assets/auth";
 import { MapPicker } from "../assets/components/Map";
 import { useVenueStore } from "../assets/useVenueStore";
 import { toast, ToastContainer } from "react-toastify";
+import { checkLogin } from "../assets/components/functions";
 
 function EditVenue() {
     const { venueId } = useParams();
+    const profileId = localStorage.getItem("userName");
+    useEffect(() => {
+        if (!profileId) {
+            checkLogin();
+        }
+    });
     const navigate = useNavigate();
     const refreshVenueStore = useVenueStore((state) => state.refreshVenueStore);
 
@@ -89,7 +96,6 @@ function EditVenue() {
 
         fetchVenue();
     }, [venueId]);
-    console.log(formData);
     const handleMediaChange = (index, value) => {
         setFormData((prev) => {
             const newMedia = [...prev.media];
@@ -220,6 +226,7 @@ function EditVenue() {
                 <Link
                     to={`/venue/${formData.id}`}
                     className="text-[#088D9A] hover:underline text-sm w-fit"
+                    aria-label="Go back to the venue"
                 >
                     ← Back to Venue
                 </Link>
