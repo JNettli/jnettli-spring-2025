@@ -36,7 +36,7 @@ function Venue() {
             end: new Date(booking.dateTo),
         })
     );
-    const [guests, setGuests] = useState(1);
+    const [guests, setGuests] = useState("1");
     const userBookings = bookedDates.filter(
         (booking) => booking.customer?.name === localStorage.getItem("userName")
     );
@@ -44,7 +44,7 @@ function Venue() {
     const [editData, setEditData] = useState({
         dateFrom: new Date(),
         dateTo: new Date(),
-        guests: 1,
+        guests: Math.max(1, parseInt(guests, 10) || 1),
     });
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const navigate = useNavigate();
@@ -69,7 +69,7 @@ function Venue() {
         const bookingInfo = {
             dateFrom: startDate.toISOString(),
             dateTo: endDate.toISOString(),
-            guests: guests,
+            guests: Math.max(1, parseInt(guests, 10) || 1),
             venueId: venueId,
             price: venue.price,
         };
@@ -449,9 +449,17 @@ function Venue() {
                                         value={guests}
                                         min={1}
                                         max={venue.maxGuests}
-                                        onChange={(e) =>
-                                            setGuests(Number(e.target.value))
-                                        }
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === "" || /^\d+$/.test(value)) {
+                                                setGuests(value);
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            if (guests === "" || Number(guests) <= 0) {
+                                                setGuests("1");
+                                            }
+                                        }}
                                         className="border p-2 rounded ml-4 w-32 font-medium"
                                     />
                                 </label>
