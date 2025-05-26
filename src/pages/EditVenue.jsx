@@ -192,12 +192,7 @@ function EditVenue() {
 
             if (!res.ok) throw new Error("Failed to delete venue");
 
-            toast.success(
-                <>
-                    Venue Deleted. <br />
-                    Sending you to home page...
-                </>
-            );
+            toast.success("Venue Deleted.");
             setTimeout(() => {
                 navigate(`/profile/${localStorage.getItem("userName")}`);
             }, 2500);
