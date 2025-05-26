@@ -24,7 +24,10 @@ function About() {
                     property="og:description"
                     content="We're committed to making your travel dreams a reality. Read about our mission and what drives us."
                 />
-                <meta property="og:image" content={"/img/holidaze.svg"} />
+                <meta
+                    property="og:image"
+                    content="https://images.unsplash.com/photo-1579547945413-497e1b99dac0?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&h=500&w=1500"
+                />
             </Helmet>
             <div className="max-w-5xl flex mx-auto px-4 pt-8">
                 <div className="mx-8 bg-white rounded-xl shadow-lg px-16 py-4">

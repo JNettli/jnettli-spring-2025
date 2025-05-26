@@ -33,6 +33,7 @@ function App() {
     const [searchParams] = useSearchParams();
 
     const limit = 100;
+    const sortOrder = "desc";
 
     const urlQuery = searchParams.get("q");
 
@@ -60,8 +61,15 @@ function App() {
         setLoading(true);
         try {
             const res = await fetch(
-                `${APIVenues}?_owner=true&_bookings=true&limit=${limit}&page=1&sort=rating`
+                `${APIVenues}?_owner=true&_bookings=true&limit=${limit}&page=1&sort=rating&sortOrder=${sortOrder}`,
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                }
             );
+            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
             const data = await res.json();
             setVenues(data.data);
             setIsLoaded(false);
@@ -81,8 +89,16 @@ function App() {
         try {
             while (true) {
                 const res = await fetch(
-                    `${APIVenues}?_owner=true&_bookings=true&limit=${limit}&page=${currentPage}`
+                    `${APIVenues}?_owner=true&_bookings=true&limit=${limit}&page=${currentPage}`,
+                    {
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                    }
                 );
+                if (!res.ok)
+                    throw new Error(`HTTP error! Status: ${res.status}`);
                 const data = await res.json();
                 const newData = data.data;
 
@@ -249,6 +265,7 @@ function App() {
 
         return () => clearInterval(intervalId);
     }, [refreshVenueStore]);
+
     return (
         <>
             <Helmet>
@@ -273,7 +290,10 @@ function App() {
                     property="og:description"
                     content="Discover a wide variety of vacation venues from around the globe. Book your dream stay with Holidaze."
                 />
-                <meta property="og:image" content={"/img/holidaze.svg"} />
+                <meta
+                    property="og:image"
+                    content="https://images.unsplash.com/photo-1579547945413-497e1b99dac0?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&h=500&w=1500"
+                />
             </Helmet>
             <div className="max-w-7xl mx-auto p-4">
                 <ToastContainer position="top-center" autoClose={3000} />
