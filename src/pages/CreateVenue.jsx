@@ -147,8 +147,7 @@ function CreateVenue() {
 
             if (!res.ok) throw new Error("Failed to create venue");
 
-            const createdVenue = await res.json();
-            refreshVenueStore(createdVenue.data);
+            await refreshVenueStore();
 
             setFormData({
                 name: "",

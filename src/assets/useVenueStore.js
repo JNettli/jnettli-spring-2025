@@ -94,6 +94,16 @@ export const useVenueStore = create(
             },
 
             refreshVenueStore: async () => {
+                localStorage.removeItem("venue-storage");
+
+                set({
+                    venues: [],
+                    isLoaded: false,
+                    searchQuery: "",
+                    isSearchMode: false,
+                    filters: { ...defaultFilter },
+                    pendingFilters: { ...defaultFilter },
+                });
                 await get().fetchAllVenues();
             },
         }),
