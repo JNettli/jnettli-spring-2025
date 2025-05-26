@@ -123,27 +123,25 @@ function Profile() {
             <ToastContainer position="top-center" autoClose={3000} />
             <div className="flex lg:flex-row flex-col justify-around lg:gap-8">
                 <div className="max-w-screen">
-                    <div className="max-w-[360px] rounded-xl bg-white py-8 px-2 shadow-lg mb-12 flex gap-2 relative">
+                    <div className="w-[360px] rounded-xl bg-white py-8 px-2 shadow-lg mb-12 flex gap-2 relative">
                         <img
                             src={profile.banner.url}
                             alt={profile.banner.alt}
-                            className="w-full h-1/2 rounded-t-xl absolute top-0 left-0 max-w-full object-cover"
+                            className="w-full h-1/2 rounded-t-xl absolute top-0 left-0 max-w-full object-cover bg-white"
                         />
                         <div className="flex flex-col gap-2 pl-2 w-fit">
                             <img
                                 src={profile.avatar.url}
                                 alt={profile.avatar.alt}
-                                className="h-24 w-24 max-h-24 max-w-24 object-cover relative rounded-full border-4 border-[#088D9A] shadow-md"
+                                className="h-24 w-24 max-h-24 max-w-24 object-cover relative rounded-full border-4 border-[#088D9A] shadow-md bg-white"
                             />
-                            <h1 className="text-center text-2xl font-bold text-[#088D9A]">
+                            <h1 className="text-2xl font-bold text-[#088D9A]">
                                 {profile.name}
                             </h1>
+                            <p className="text-slate-600">{profile.email}</p>
                         </div>
                         <div className="flex flex-col justify-end py-1">
                             <div>
-                                <p className="text-slate-600">
-                                    {profile.email}
-                                </p>
                                 {profile.venueManager ? (
                                     <img
                                         src="/img/manager.svg"

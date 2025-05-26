@@ -233,33 +233,33 @@ function EditProfile() {
                 <h2 className="text-xl font-semibold text-[#007A8D] text-center mb-2">
                     Profile Card Preview
                 </h2>
-                <div className="max-w-[360px] rounded-xl bg-white py-8 px-2 shadow-lg flex gap-2 relative">
+                <div className="w-[360px] rounded-xl bg-white py-8 px-2 shadow-lg flex gap-2 relative">
                     <img
                         src={formData.bannerUrl}
-                        alt="Avatar Preview"
+                        alt="Banner Preview"
                         onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = "/img/error-image.svg";
                         }}
-                        className="w-full h-1/2 rounded-t-xl absolute top-0 left-0 max-w-full object-cover"
+                        className="w-full h-1/2 rounded-t-xl absolute top-0 left-0 max-w-full object-cover bg-white"
                     />
                     <div className="flex flex-col gap-2 pl-2 w-fit">
                         <img
                             src={formData.avatarUrl}
-                            alt="Banner Preview"
+                            alt="Avatar Preview"
                             onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = "/img/error-image.svg";
                             }}
-                            className="h-24 w-24 max-h-24 max-w-24 object-cover relative rounded-full border-4 border-[#088D9A] shadow-md"
+                            className="h-24 w-24 max-h-24 max-w-24 object-cover relative rounded-full border-4 border-[#088D9A] bg-white shadow-md"
                         />
-                        <h1 className="text-center text-2xl font-bold text-[#088D9A]">
+                        <h1 className="text-2xl font-bold text-[#088D9A]">
                             {formData.name}
                         </h1>
+                        <p className="text-slate-600">{formData.email}</p>
                     </div>
                     <div className="flex flex-col justify-end py-1">
                         <div>
-                            <p className="text-slate-600">{formData.email}</p>
                             {formData.venueManager ? (
                                 <img
                                     src="/img/manager.svg"

@@ -229,271 +229,454 @@ function Venue() {
                 </div>
 
                 <div className="border-b border-slate-900/20 my-4 w-4/5"></div>
-                <div className="flex w-full max-w-5xl lg:justify-around gap-4 lg:items-start items-center mt-4 lg:flex-row flex-col">
-                    <div className="lg:w-2/3 w-full flex flex-col gap-6">
-                        <h1 className="text-center font-bold text-4xl text-[#088D9A] w-full truncate">
-                            {venue.name}
-                        </h1>
-                        <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
+                <div>
+                    <div className="flex w-full max-w-5xl lg:justify-around gap-4 lg:items-start items-center mt-4 lg:flex-row flex-col">
+                        <div className="lg:w-2/3 w-full flex flex-col gap-6">
+                            <h1 className="text-center font-bold text-4xl text-[#088D9A] w-full truncate">
+                                {venue.name}
+                            </h1>
+                            <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
 
-                        <div className="lg:px-0 px-8">
-                            <h2 className="text-2xl font-semibold text-slate-800 mb-2">
-                                About This Place
-                            </h2>
-                            <p
-                                className={`text-base text-slate-700 whitespace-pre-line ${
-                                    showFullDesc ? "" : "line-clamp-5"
-                                }`}
-                            >
-                                {venue.description}
-                            </p>
-                            {venue.description.length > 300 && (
-                                <>
-                                    <button
-                                        onClick={() =>
-                                            setShowFullDesc(!showFullDesc)
-                                        }
-                                        className="cursor-pointer relative w-fit left-1/2 -translate-x-1/2 top-3"
-                                    >
-                                        <p className="text-slate-700 bg-slate-50 mx-auto px-1">
-                                            {showFullDesc
-                                                ? "Show less"
-                                                : "Show more"}
-                                        </p>
-                                    </button>
-                                    <div className="border-b border-slate-900/20 w-2/5 mx-auto"></div>
-                                </>
-                            )}
+                            <div className="lg:px-0 px-8">
+                                <h2 className="text-2xl font-semibold text-slate-800 mb-2">
+                                    About This Place
+                                </h2>
+                                <p
+                                    className={`text-base text-slate-700 whitespace-pre-line ${
+                                        showFullDesc ? "" : "line-clamp-5"
+                                    }`}
+                                >
+                                    {venue.description}
+                                </p>
+                                {venue.description.length > 300 && (
+                                    <>
+                                        <button
+                                            onClick={() =>
+                                                setShowFullDesc(!showFullDesc)
+                                            }
+                                            className="cursor-pointer relative w-fit left-1/2 -translate-x-1/2 top-3"
+                                        >
+                                            <p className="text-slate-700 bg-slate-50 mx-auto px-1">
+                                                {showFullDesc
+                                                    ? "Show less"
+                                                    : "Show more"}
+                                            </p>
+                                        </button>
+                                        <div className="border-b border-slate-900/20 w-2/5 mx-auto"></div>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
+                            <div className="flex flex-wrap justify-evenly text-base text-slate-800">
+                                <span className="font-medium">Max Guests:</span>{" "}
+                                <div className="flex gap-2">
+                                    {venue.maxGuests}
+                                    <img
+                                        src="/img/profile.svg"
+                                        alt="Guest Icon"
+                                        className="h-4 my-auto"
+                                    />
+                                </div>
+                                <span className="font-medium">
+                                    Currently Booked:
+                                </span>{" "}
+                                {venue._count.bookings}
+                            </div>
+
+                            <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
+                            <div className="lg:px-0 px-8">
+                                <h3 className="text-lg font-semibold text-slate-800 mb-1">
+                                    Amenities
+                                </h3>
+                                <div className="flex flex-wrap gap-4">
+                                    {[
+                                        {
+                                            label: "Wifi",
+                                            value: venue.meta.wifi,
+                                        },
+                                        {
+                                            label: "Parking",
+                                            value: venue.meta.parking,
+                                        },
+                                        {
+                                            label: "Breakfast",
+                                            value: venue.meta.breakfast,
+                                        },
+                                        {
+                                            label: "Pets",
+                                            value: venue.meta.pets,
+                                        },
+                                    ].map(({ label, value }) => (
+                                        <span
+                                            key={label}
+                                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                                value
+                                                    ? "bg-[#088D9A] text-white"
+                                                    : "bg-slate-200 text-slate-500 line-through"
+                                            }`}
+                                        >
+                                            {label}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="rounded-xl border border-slate-900/10 shadow-md p-4 flex flex-col w-full max-w-full justify-between mt-8">
+                                <h3 className="text-lg font-semibold text-slate-800 mb-2 bg-slate-50 relative -top-8 w-fit px-1">
+                                    Location
+                                </h3>
+                                <div className="flex justify-between -mt-10 mb-4 truncate">
+                                    <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
+                                        <div className="text-slate-700 truncate">
+                                            <p className="font-semibold text-lg">
+                                                Address:
+                                            </p>{" "}
+                                            {venue.location.address ||
+                                                "Not available"}
+                                        </div>
+                                        <div className="border-r border-slate-900/50 md:block hidden"></div>
+                                        <div className="text-slate-700 truncate">
+                                            <p className="font-semibold text-lg">
+                                                City:
+                                            </p>{" "}
+                                            {venue.location.city ||
+                                                "Not available"}
+                                        </div>
+                                    </div>
+                                    <div className="border-r border-slate-900/50"></div>
+                                    <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
+                                        <div className="text-slate-700 truncate">
+                                            <p className="font-semibold text-lg">
+                                                Country:
+                                            </p>{" "}
+                                            {venue.location.country ||
+                                                "Not available"}
+                                        </div>
+                                        <div className="border-r border-slate-900/50 md:block hidden"></div>
+                                        <div className="text-slate-700 truncate">
+                                            <p className="font-semibold text-lg">
+                                                Zip code:
+                                            </p>{" "}
+                                            {venue.location.zip ||
+                                                "Not available"}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="relative z-10 h-fit w-full">
+                                    <MapDisplay
+                                        lat={venue.location.lat}
+                                        lng={venue.location.lng}
+                                    />
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
-                        <div className="flex flex-wrap justify-evenly text-base text-slate-800">
-                            <span className="font-medium">Max Guests:</span>{" "}
-                            <div className="flex gap-2">
-                                {venue.maxGuests}
+                        <div className="flex flex-col w-fit items-center gap-8">
+                            <div className="rounded-xl bg-white p-4 w-full shadow-lg flex justify-between items-center gap-4">
+                                <div>
+                                    <p>This venue is managed by:</p>
+                                    <h2 className="text-2xl font-bold text-[#088D9A]">
+                                        {venue.owner.name}
+                                    </h2>
+                                </div>
                                 <img
-                                    src="/img/profile.svg"
-                                    alt="Guest Icon"
-                                    className="h-4 my-auto"
+                                    src={
+                                        venue.owner.avatar.url ||
+                                        "/img/profile.svg"
+                                    }
+                                    alt={
+                                        venue.owner.avatar.alt ||
+                                        "A cool profile image"
+                                    }
+                                    className="h-20 w-20 rounded-full object-cover border-4 border-[#088D9A]"
                                 />
                             </div>
-                            <span className="font-medium">
-                                Currently Booked:
-                            </span>{" "}
-                            {venue._count.bookings}
-                        </div>
+                            <div className="flex flex-col bg-white shadow-lg rounded-xl lg:p-4 py-4 w-full max-w-screen">
+                                <h2 className="text-xl mb-2 text-center">
+                                    <p className="inline font-semibold text-[#088D9A]">
+                                        ${venue.price}
+                                    </p>{" "}
+                                    / Night
+                                </h2>
+                                <DateRange
+                                    editableDateInputs={true}
+                                    onChange={(item) => {
+                                        const clickedElement =
+                                            document.activeElement;
+                                        if (
+                                            leftCalendar.current?.contains(
+                                                clickedElement
+                                            )
+                                        ) {
+                                            setDateRange([
+                                                {
+                                                    ...dateRange[0],
+                                                    startDate:
+                                                        item.selection
+                                                            .startDate,
+                                                },
+                                            ]);
+                                        } else if (
+                                            rightCalendar.current?.contains(
+                                                clickedElement
+                                            )
+                                        ) {
+                                            setDateRange([
+                                                {
+                                                    ...dateRange[0],
+                                                    endDate:
+                                                        item.selection.endDate,
+                                                },
+                                            ]);
+                                        } else {
+                                            setDateRange([item.selection]);
+                                        }
+                                    }}
+                                    moveRangeOnFirstSelection={false}
+                                    ranges={dateRange}
+                                    disabledDates={disabledDates}
+                                    minDate={new Date()}
+                                    className="mx-auto"
+                                />
 
-                        <div className="border-b border-slate-900/20 mx-auto w-4/5"></div>
-                        <div className="lg:px-0 px-8">
-                            <h3 className="text-lg font-semibold text-slate-800 mb-1">
-                                Amenities
-                            </h3>
-                            <div className="flex flex-wrap gap-4">
-                                {[
-                                    { label: "Wifi", value: venue.meta.wifi },
-                                    {
-                                        label: "Parking",
-                                        value: venue.meta.parking,
-                                    },
-                                    {
-                                        label: "Breakfast",
-                                        value: venue.meta.breakfast,
-                                    },
-                                    { label: "Pets", value: venue.meta.pets },
-                                ].map(({ label, value }) => (
-                                    <span
-                                        key={label}
-                                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                            value
-                                                ? "bg-[#088D9A] text-white"
-                                                : "bg-slate-200 text-slate-500 line-through"
-                                        }`}
+                                <label className="my-4 mx-auto font-semibold">
+                                    Number of guests:
+                                    <input
+                                        type="number"
+                                        value={guests}
+                                        min={1}
+                                        max={venue.maxGuests}
+                                        onChange={(e) =>
+                                            setGuests(Number(e.target.value))
+                                        }
+                                        className="border p-2 rounded ml-4 w-32 font-medium"
+                                    />
+                                </label>
+
+                                <button
+                                    onClick={handleBooking}
+                                    className="bg-[#088D9A] text-white px-4 py-2 rounded hover:bg-[#077d89] transition mx-auto w-2/3 cursor-pointer"
+                                >
+                                    Book Now
+                                </button>
+                            </div>
+
+                            {isOwner &&
+                                localStorage.getItem("venueManager") ==
+                                    "true" && (
+                                    <>
+                                        <Link
+                                            to={`/venues/edit/${venueId}`}
+                                            className="text-white p-2 text-center bg-[#088D9A] hover:bg-[#077d89] rounded w-2/3 cursor-pointer transition duration-150"
+                                            aria-label="Go to Edit this venue"
+                                        >
+                                            Edit Venue
+                                        </Link>
+                                    </>
+                                )}
+                            <div className="flex flex-col flex-wrap">
+                                {userBookings.map((booking) => (
+                                    <div
+                                        key={booking.id}
+                                        className="bg-white p-4 my-2 rounded-xl w-fit shadow-lg text-slate-700"
                                     >
-                                        {label}
-                                    </span>
+                                        <p className="font-bold text-lg text-slate-800">
+                                            Your booking:
+                                        </p>
+                                        <div className="flex justify-between">
+                                            <p className="font-semibold">
+                                                From:{" "}
+                                            </p>
+                                            {new Date(
+                                                booking.dateFrom
+                                            ).toLocaleDateString("en-GB", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
+                                            })}{" "}
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <p className="font-semibold">
+                                                To:{" "}
+                                            </p>
+                                            {new Date(
+                                                booking.dateTo
+                                            ).toLocaleDateString("en-GB", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
+                                            })}{" "}
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <p className="font-semibold">
+                                                Total Nights:{" "}
+                                            </p>
+                                            {Math.floor(
+                                                (new Date(booking.dateTo) -
+                                                    new Date(
+                                                        booking.dateFrom
+                                                    )) /
+                                                    (1000 * 60 * 60 * 24)
+                                            ) + 1}
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <p className="font-semibold">
+                                                Guests:
+                                            </p>
+                                            {booking.guests}
+                                        </div>
+                                        <button
+                                            className="text-white mt-2 p-2 bg-[#088D9A] hover:bg-[#077d89] rounded w-full cursor-pointer transition duration-150"
+                                            onClick={() =>
+                                                handleEditClick(booking)
+                                            }
+                                        >
+                                            Edit Booking
+                                        </button>
+                                        <button
+                                            className="text-white mt-2 p-2 bg-red-600 hover:bg-red-700 rounded w-full cursor-pointer transition duration-150"
+                                            onClick={() => {
+                                                setBookingToDelete(booking.id);
+                                                setShowConfirmModal(true);
+                                            }}
+                                        >
+                                            Delete Booking
+                                        </button>
+
+                                        {editBookingId === booking.id && (
+                                            <form
+                                                onSubmit={(e) => {
+                                                    e.preventDefault();
+                                                    setShowConfirmDialog(true);
+                                                }}
+                                                className="flex flex-col gap-2"
+                                            >
+                                                <label>
+                                                    From:
+                                                    <input
+                                                        type="date"
+                                                        value={
+                                                            editData.dateFrom
+                                                                .toISOString()
+                                                                .split("T")[0]
+                                                        }
+                                                        onChange={(e) =>
+                                                            setEditData({
+                                                                ...editData,
+                                                                dateFrom:
+                                                                    new Date(
+                                                                        e.target.value
+                                                                    ),
+                                                            })
+                                                        }
+                                                        required
+                                                        className="border rounded p-1 w-full"
+                                                    />
+                                                </label>
+                                                <label>
+                                                    To:
+                                                    <input
+                                                        type="date"
+                                                        value={
+                                                            editData.dateTo
+                                                                .toISOString()
+                                                                .split("T")[0]
+                                                        }
+                                                        onChange={(e) =>
+                                                            setEditData({
+                                                                ...editData,
+                                                                dateTo: new Date(
+                                                                    e.target.value
+                                                                ),
+                                                            })
+                                                        }
+                                                        required
+                                                        className="border rounded p-1 w-full"
+                                                    />
+                                                </label>
+                                                <label>
+                                                    Guests:
+                                                    <input
+                                                        type="number"
+                                                        min="1"
+                                                        value={editData.guests}
+                                                        onChange={(e) =>
+                                                            setEditData({
+                                                                ...editData,
+                                                                guests: parseInt(
+                                                                    e.target
+                                                                        .value
+                                                                ),
+                                                            })
+                                                        }
+                                                        required
+                                                        className="border rounded p-1 w-full"
+                                                    />
+                                                </label>
+                                                <button
+                                                    type="submit"
+                                                    className="text-white mt-2 p-2 bg-[#088D9A] hover:bg-[#077d89] rounded w-full cursor-pointer transition duration-150"
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setEditBookingId(null)
+                                                    }
+                                                    className="text-black p-2 bg-gray-300 hover:bg-gray-400 rounded w-full cursor-pointer transition duration-150"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                        )}
+                                    </div>
                                 ))}
                             </div>
                         </div>
-
-                        <div className="rounded-xl border border-slate-900/10 shadow-md p-4 flex flex-col w-full max-w-full justify-between mt-8">
-                            <h3 className="text-lg font-semibold text-slate-800 mb-2 bg-slate-50 relative -top-8 w-fit px-1">
-                                Location
-                            </h3>
-                            <div className="flex justify-between -mt-10 mb-4 truncate">
-                                <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
-                                    <div className="text-slate-700 truncate">
-                                        <p className="font-semibold text-lg">
-                                            Address:
-                                        </p>{" "}
-                                        {venue.location.address ||
-                                            "Not available"}
-                                    </div>
-                                    <div className="border-r border-slate-900/50 md:block hidden"></div>
-                                    <div className="text-slate-700 truncate">
-                                        <p className="font-semibold text-lg">
-                                            City:
-                                        </p>{" "}
-                                        {venue.location.city || "Not available"}
-                                    </div>
-                                </div>
-                                <div className="border-r border-slate-900/50"></div>
-                                <div className="flex w-full justify-evenly text-center gap-4 md:flex-row flex-col">
-                                    <div className="text-slate-700 truncate">
-                                        <p className="font-semibold text-lg">
-                                            Country:
-                                        </p>{" "}
-                                        {venue.location.country ||
-                                            "Not available"}
-                                    </div>
-                                    <div className="border-r border-slate-900/50 md:block hidden"></div>
-                                    <div className="text-slate-700 truncate">
-                                        <p className="font-semibold text-lg">
-                                            Zip code:
-                                        </p>{" "}
-                                        {venue.location.zip || "Not available"}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="relative z-10 h-fit w-full">
-                                <MapDisplay
-                                    lat={venue.location.lat}
-                                    lng={venue.location.lng}
-                                />
-                            </div>
-                        </div>
                     </div>
-
-                    <div className="flex flex-col w-fit items-center gap-8">
-                        <div className="rounded-xl bg-white p-4 w-full shadow-lg flex justify-between items-center gap-4">
-                            <div>
-                                <p>This venue is managed by:</p>
-                                <h2 className="text-2xl font-bold text-[#088D9A]">
-                                    {venue.owner.name}
-                                </h2>
-                            </div>
-                            <img
-                                src={
-                                    venue.owner.avatar.url || "/img/profile.svg"
-                                }
-                                alt={
-                                    venue.owner.avatar.alt ||
-                                    "A cool profile image"
-                                }
-                                className="h-20 w-20 rounded-full object-cover border-4 border-[#088D9A]"
-                            />
-                        </div>
-                        <div className="flex flex-col bg-white shadow-lg rounded-xl lg:p-4 py-4 w-full max-w-screen">
-                            <h2 className="text-xl mb-2 text-center">
-                                <p className="inline font-semibold text-[#088D9A]">
-                                    ${venue.price}
-                                </p>{" "}
-                                / Night
-                            </h2>
-                            <DateRange
-                                editableDateInputs={true}
-                                onChange={(item) => {
-                                    const clickedElement =
-                                        document.activeElement;
-                                    if (
-                                        leftCalendar.current?.contains(
-                                            clickedElement
-                                        )
-                                    ) {
-                                        setDateRange([
-                                            {
-                                                ...dateRange[0],
-                                                startDate:
-                                                    item.selection.startDate,
-                                            },
-                                        ]);
-                                    } else if (
-                                        rightCalendar.current?.contains(
-                                            clickedElement
-                                        )
-                                    ) {
-                                        setDateRange([
-                                            {
-                                                ...dateRange[0],
-                                                endDate: item.selection.endDate,
-                                            },
-                                        ]);
-                                    } else {
-                                        setDateRange([item.selection]);
-                                    }
-                                }}
-                                moveRangeOnFirstSelection={false}
-                                ranges={dateRange}
-                                disabledDates={disabledDates}
-                                minDate={new Date()}
-                                className="mx-auto"
-                            />
-
-                            <label className="my-4 mx-auto font-semibold">
-                                Number of guests:
-                                <input
-                                    type="number"
-                                    value={guests}
-                                    min={1}
-                                    max={venue.maxGuests}
-                                    onChange={(e) =>
-                                        setGuests(Number(e.target.value))
-                                    }
-                                    className="border p-2 rounded ml-4 w-32 font-medium"
-                                />
-                            </label>
-
-                            <button
-                                onClick={handleBooking}
-                                className="bg-[#088D9A] text-white px-4 py-2 rounded hover:bg-[#077d89] transition mx-auto w-2/3"
-                            >
-                                Book Now
-                            </button>
-                        </div>
-
+                    {isOwner && (
+                        <h3 className="text-2xl text-center font-semibold text-[#088D9A] py-4">
+                            Bookings on your venue
+                        </h3>
+                    )}
+                    <div className="grid lg:grid-cols-3 grid-cols-1 lg:max-w-3xl md:grid-cols-2 md:max-w-1/2 max-w-[320px] gap-4 mx-auto">
                         {isOwner &&
-                            localStorage.getItem("venueManager") == "true" && (
-                                <>
-                                    <Link
-                                        to={`/venues/edit/${venueId}`}
-                                        className="text-white p-2 text-center bg-[#088D9A] hover:bg-[#077d89] rounded w-2/3 cursor-pointer transition duration-150"
-                                        aria-label="Go to Edit this venue"
-                                    >
-                                        Edit Venue
-                                    </Link>
-                                </>
-                            )}
-                        <div className="flex flex-col flex-wrap">
-                            {userBookings.map((booking) => (
+                            venue.bookings?.map((booking) => (
                                 <div
                                     key={booking.id}
-                                    className="bg-white p-4 my-2 rounded-xl w-fit shadow-lg text-slate-700"
+                                    className="bg-white w-full p-4 my-2 rounded-xl shadow-md text-slate-700 hover:shadow-lg transition duration-150"
                                 >
                                     <p className="font-bold text-lg text-slate-800">
-                                        Your booking:
+                                        Booking from {booking.customer?.name}:
                                     </p>
+
                                     <div className="flex justify-between">
-                                        <p className="font-semibold">From: </p>
+                                        <p className="font-semibold">From:</p>
                                         {new Date(
                                             booking.dateFrom
                                         ).toLocaleDateString("en-GB", {
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
-                                        })}{" "}
+                                        })}
                                     </div>
+
                                     <div className="flex justify-between">
-                                        <p className="font-semibold">To: </p>
+                                        <p className="font-semibold">To:</p>
                                         {new Date(
                                             booking.dateTo
                                         ).toLocaleDateString("en-GB", {
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
-                                        })}{" "}
+                                        })}
                                     </div>
+
                                     <div className="flex justify-between">
                                         <p className="font-semibold">
-                                            Total Nights:{" "}
+                                            Total Nights:
                                         </p>
                                         {Math.floor(
                                             (new Date(booking.dateTo) -
@@ -501,115 +684,17 @@ function Venue() {
                                                 (1000 * 60 * 60 * 24)
                                         ) + 1}
                                     </div>
+
                                     <div className="flex justify-between">
                                         <p className="font-semibold">Guests:</p>
                                         {booking.guests}
                                     </div>
-                                    <button
-                                        className="text-white mt-2 p-2 bg-[#088D9A] hover:bg-[#077d89] rounded w-full cursor-pointer transition duration-150"
-                                        onClick={() => handleEditClick(booking)}
-                                    >
-                                        Edit Booking
-                                    </button>
-                                    <button
-                                        className="text-white mt-2 p-2 bg-red-600 hover:bg-red-700 rounded w-full cursor-pointer transition duration-150"
-                                        onClick={() => {
-                                            setBookingToDelete(booking.id);
-                                            setShowConfirmModal(true);
-                                        }}
-                                    >
-                                        Delete Booking
-                                    </button>
-
-                                    {editBookingId === booking.id && (
-                                        <form
-                                            onSubmit={(e) => {
-                                                e.preventDefault();
-                                                setShowConfirmDialog(true);
-                                            }}
-                                            className="flex flex-col gap-2"
-                                        >
-                                            <label>
-                                                From:
-                                                <input
-                                                    type="date"
-                                                    value={
-                                                        editData.dateFrom
-                                                            .toISOString()
-                                                            .split("T")[0]
-                                                    }
-                                                    onChange={(e) =>
-                                                        setEditData({
-                                                            ...editData,
-                                                            dateFrom: new Date(
-                                                                e.target.value
-                                                            ),
-                                                        })
-                                                    }
-                                                    required
-                                                    className="border rounded p-1 w-full"
-                                                />
-                                            </label>
-                                            <label>
-                                                To:
-                                                <input
-                                                    type="date"
-                                                    value={
-                                                        editData.dateTo
-                                                            .toISOString()
-                                                            .split("T")[0]
-                                                    }
-                                                    onChange={(e) =>
-                                                        setEditData({
-                                                            ...editData,
-                                                            dateTo: new Date(
-                                                                e.target.value
-                                                            ),
-                                                        })
-                                                    }
-                                                    required
-                                                    className="border rounded p-1 w-full"
-                                                />
-                                            </label>
-                                            <label>
-                                                Guests:
-                                                <input
-                                                    type="number"
-                                                    min="1"
-                                                    value={editData.guests}
-                                                    onChange={(e) =>
-                                                        setEditData({
-                                                            ...editData,
-                                                            guests: parseInt(
-                                                                e.target.value
-                                                            ),
-                                                        })
-                                                    }
-                                                    required
-                                                    className="border rounded p-1 w-full"
-                                                />
-                                            </label>
-                                            <button
-                                                type="submit"
-                                                className="text-white mt-2 p-2 bg-[#088D9A] hover:bg-[#077d89] rounded w-full cursor-pointer transition duration-150"
-                                            >
-                                                Save
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    setEditBookingId(null)
-                                                }
-                                                className="text-black p-2 bg-gray-300 hover:bg-gray-400 rounded w-full cursor-pointer transition duration-150"
-                                            >
-                                                Cancel
-                                            </button>
-                                        </form>
-                                    )}
                                 </div>
                             ))}
-                        </div>
                     </div>
+
+                    {console.log(venue.bookings)}
+
                     <dialog
                         ref={dialogRef}
                         className="rounded p-6 w-fit lg:max-w-5xl max-w-screen shadow-xl m-auto"

@@ -115,6 +115,7 @@ function App() {
         } catch (err) {
             console.error("Error loading full venue list:", err);
             toast.error("Error loading full venue list");
+            setIsLoaded(true);
         }
     }, [venues, setVenues, isLoaded, setIsLoaded]);
 
