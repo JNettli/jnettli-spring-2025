@@ -4,7 +4,7 @@ import { APIVenues } from "../assets/Constants";
 import { APIKEY } from "../assets/auth";
 import { MapPicker } from "../assets/components/Map";
 import { useVenueStore } from "../assets/useVenueStore";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { checkLogin } from "../assets/components/functions";
 
 function EditVenue() {
@@ -218,7 +218,6 @@ function EditVenue() {
 
     return (
         <div className="flex justify-center mt-6 px-4">
-            <ToastContainer position="top-center" autoClose={3000} />
             <form
                 onSubmit={handleSubmit}
                 className="flex flex-col gap-4 w-full max-w-3xl rounded-xl shadow-md p-6 bg-white"

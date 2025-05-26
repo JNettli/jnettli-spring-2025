@@ -77,24 +77,50 @@ export default function Filter({ filters, onFilterChange, onApply, onReset }) {
                                 ))}
                             </div>
                         </div>
-                        <div className="flex flex-col lg:w-1/2 w-full">
-                            <h2 className="font-semibold mb-2">Sort By</h2>
-                            <select
-                                value={filters.sortBy || ""}
-                                onChange={(e) =>
-                                    onFilterChange({
-                                        ...filters,
-                                        sortBy: e.target.value || undefined,
-                                    })
-                                }
-                                className="border p-2 rounded w-full border-[#088D9A] focus:outline-[#088D9A] cursor-pointer"
-                            >
-                                <option value="">Choose Option</option>
-                                <option value="rating">Rating</option>
-                                <option value="created">Creation Date</option>
-                                <option value="updated">Updated Date</option>
-                                <option value="popularity">Popularity</option>
-                            </select>
+                        <div className="flex gap-4 lg:w-1/2 w-full">
+                            <div className="flex flex-col w-full">
+                                <h2 className="font-semibold mb-2">Sort By</h2>
+                                <select
+                                    value={filters.sortBy || ""}
+                                    onChange={(e) =>
+                                        onFilterChange({
+                                            ...filters,
+                                            sortBy: e.target.value || undefined,
+                                        })
+                                    }
+                                    className="border p-2 rounded w-full border-[#088D9A] focus:outline-[#088D9A] cursor-pointer"
+                                >
+                                    <option value="">Choose Option</option>
+                                    <option value="rating">Rating</option>
+                                    <option value="created">
+                                        Creation Date
+                                    </option>
+                                    <option value="updated">
+                                        Updated Date
+                                    </option>
+                                    <option value="popularity">
+                                        Popularity
+                                    </option>
+                                </select>
+                            </div>
+                            <div className="w-full">
+                                <h2 className="font-semibold mb-2">
+                                    Sort Order
+                                </h2>
+                                <select
+                                    value={filters.sortOrder || "desc"}
+                                    onChange={(e) =>
+                                        onFilterChange({
+                                            ...filters,
+                                            sortOrder: e.target.value,
+                                        })
+                                    }
+                                    className="border p-2 rounded w-full border-[#088D9A] focus:outline-[#088D9A] cursor-pointer"
+                                >
+                                    <option value="desc">Descending</option>
+                                    <option value="asc">Ascending</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

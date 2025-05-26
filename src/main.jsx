@@ -13,7 +13,7 @@ import {
     About,
 } from "./pages/Pages";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async"; // ✅ Add this
+import { HelmetProvider } from "react-helmet-async";
 
 const router = createBrowserRouter([
     {

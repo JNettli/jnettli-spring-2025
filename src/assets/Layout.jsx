@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import { ToastContainer } from "react-toastify";
 
 function Layout() {
     return (
@@ -10,6 +11,7 @@ function Layout() {
                 <Outlet />
             </main>
             <Footer />
+            <ToastContainer position="top-center" autoClose={3000} />
         </div>
     );
 }

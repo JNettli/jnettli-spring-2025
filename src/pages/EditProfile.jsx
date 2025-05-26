@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { APIProfile } from "../assets/Constants";
 import { APIKEY } from "../assets/auth";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 function EditProfile() {
     const profileId = localStorage.getItem("userName");
@@ -120,7 +120,6 @@ function EditProfile() {
 
     return (
         <div className="flex lg:flex-row flex-col-reverse lg:items-start items-center justify-center gap-8 mt-4">
-            <ToastContainer position="top-center" autoClose={3000} />
             <form
                 onSubmit={handleSubmit}
                 className="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl space-y-4"

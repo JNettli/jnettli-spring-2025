@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { login } from "../auth";
 import { register } from "../auth";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function LoginModal({ isOpen, onClose }) {
     const [fade, setFade] = useState(false);
@@ -90,7 +90,7 @@ export default function LoginModal({ isOpen, onClose }) {
                 setTimeout(() => {
                     closeModal();
                     window.location.reload();
-                }, 2000);
+                }, 1000);
             } catch (error) {
                 toast.error(getErrorMessage(error));
                 console.error("Login failed.", error);
@@ -102,8 +102,6 @@ export default function LoginModal({ isOpen, onClose }) {
 
     return (
         <>
-            <ToastContainer position="top-center" autoClose={3000} />
-
             {isOpen && (
                 <div
                     onMouseDown={closeModal}

@@ -6,7 +6,7 @@ import LoginModal from "./LoginModal";
 import SearchBar from "./Search";
 import Filter from "./Filter";
 import { logout } from "../auth";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -34,7 +34,6 @@ function Header() {
 
     return (
         <>
-            <ToastContainer position="top-center" autoClose={3000} />
             <header className="flex w-full justify-between items-center px-6 md:px-16 py-5 border-b border-b-slate-900/50 bg-slate-50 relative z-50">
                 <div className="flex flex-shrink-0 w-40">
                     <Link

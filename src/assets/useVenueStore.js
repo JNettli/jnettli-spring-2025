@@ -2,6 +2,17 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { APIVenues } from "../assets/Constants";
 
+const defaultFilter = {
+    wifi: undefined,
+    parking: undefined,
+    pets: undefined,
+    breakfast: undefined,
+    minPrice: undefined,
+    maxPrice: undefined,
+    maxGuests: undefined,
+    sort: undefined,
+};
+
 export const useVenueStore = create(
     persist(
         (set, get) => ({
@@ -30,17 +41,11 @@ export const useVenueStore = create(
             },
 
             filters: {
-                wifi: undefined,
-                parking: undefined,
-                pets: undefined,
-                breakfast: undefined,
+                ...defaultFilter,
             },
 
             pendingFilters: {
-                wifi: undefined,
-                parking: undefined,
-                pets: undefined,
-                breakfast: undefined,
+                ...defaultFilter,
             },
 
             setFilters: (newFilters) => set({ filters: newFilters }),
@@ -49,24 +54,10 @@ export const useVenueStore = create(
             resetFilters: () =>
                 set({
                     filters: {
-                        wifi: undefined,
-                        parking: undefined,
-                        pets: undefined,
-                        breakfast: undefined,
-                        minPrice: undefined,
-                        maxPrice: undefined,
-                        maxGuests: undefined,
-                        sort: undefined,
+                        ...defaultFilter,
                     },
                     pendingFilters: {
-                        wifi: undefined,
-                        parking: undefined,
-                        pets: undefined,
-                        breakfast: undefined,
-                        minPrice: undefined,
-                        maxPrice: undefined,
-                        maxGuests: undefined,
-                        sort: undefined,
+                        ...defaultFilter,
                     },
                 }),
 
@@ -113,6 +104,7 @@ export const useVenueStore = create(
                 isLoaded: state.isLoaded,
                 searchQuery: state.searchQuery,
                 isSearchMode: state.isSearchMode,
+                filters: state.filters,
             }),
         }
     )

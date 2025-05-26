@@ -1,4 +1,5 @@
 import { APILogin, APIRegister } from "./Constants";
+import { toast } from "react-toastify";
 
 export const APIKEY = import.meta.env.VITE_API_KEY;
 
@@ -37,7 +38,7 @@ export async function register(name, email, password, userType) {
         body: JSON.stringify({ name, email, password, userType }),
     });
     if (registerResponse.ok) {
-        alert("Registration successful! Please login to continue.");
+        toast.success("Registration successful! Please login to continue.");
     } else {
         const err = await registerResponse.json();
         console.error(err);
@@ -52,6 +53,6 @@ export function logout() {
     localStorage.removeItem("userImage");
     localStorage.removeItem("venueManager");
     setTimeout(() => {
-        window.location.href = "/";
-    }, 2000);
+        window.location.reload();
+    }, 500);
 }

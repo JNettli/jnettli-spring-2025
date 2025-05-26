@@ -4,7 +4,7 @@ import { APIProfile } from "../assets/Constants";
 import { APIKEY } from "../assets/auth";
 import { isLoggedIn } from "../assets/components/functions";
 import { differenceInCalendarDays } from "date-fns";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 function Profile() {
     const profileId = localStorage.getItem("userName");
@@ -120,7 +120,6 @@ function Profile() {
 
     return (
         <div className="flex flex-col items-center px-4 py-8">
-            <ToastContainer position="top-center" autoClose={3000} />
             <div className="flex lg:flex-row flex-col justify-around lg:gap-8">
                 <div className="max-w-screen">
                     <div className="w-[360px] rounded-xl bg-white py-8 px-2 shadow-lg mb-12 flex gap-2 relative">

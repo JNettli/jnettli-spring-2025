@@ -3,7 +3,7 @@ import { APIVenues } from "../assets/Constants";
 import { Link, useNavigate } from "react-router-dom";
 import { MapPicker } from "../assets/components/Map";
 import { APIKEY } from "../assets/auth";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { useVenueStore } from "../assets/useVenueStore";
 import "react-toastify/dist/ReactToastify.css";
 import "react-date-range/dist/styles.css";
@@ -189,7 +189,6 @@ function CreateVenue() {
 
     return (
         <div className="max-w-5xl mx-auto px-4 pt-2">
-            <ToastContainer position="top-center" autoClose={3000} />
             <div className="bg-white rounded-2xl shadow-md p-6 md:p-10">
                 <Link
                     to={`/profile/${profileId}`}

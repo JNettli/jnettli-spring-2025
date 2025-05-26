@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { APIBookings, APIVenues } from "../assets/Constants";
 import { MapDisplay } from "../assets/components/Map";
 import { DateRange } from "react-date-range";
@@ -92,6 +92,7 @@ function Venue() {
                 const currentUsername = localStorage.getItem("userName");
                 setIsOwner(data.data.owner.name === currentUsername);
             } catch (error) {
+                toast.error(error);
                 console.error("Error fetching venue or bookings:", error);
             }
         }
@@ -183,11 +184,9 @@ function Venue() {
                     content={`${venue.name} | Holidaze`}
                 />
                 <meta property="og:description" content={venue.description} />
-                <meta property="og:image" content={venue.media[0].url} />
             </Helmet>
 
             <div className="flex flex-col items-center">
-                <ToastContainer position="top-center" autoClose={3000} />
                 <div className="w-full">
                     <div className="w-full flex lg:flex-row flex-col items-center gap-2 justify-center">
                         <div className="overflow-hidden rounded-xl shadow-md bg-slate-50 lg:max-w-2/3 md:max-w-4/5 w-fit lg:max-h-[632px] md:max-h-96 max-h-64 h-fit flex items-center justify-center">
@@ -197,7 +196,10 @@ function Venue() {
                                 rel="noopener noreferrer"
                             >
                                 <img
-                                    src={venue.media[mainImageIndex]?.url}
+                                    src={
+                                        venue.media[mainImageIndex]?.url ||
+                                        "/img/error-image.png"
+                                    }
                                     alt={venue.media[mainImageIndex]?.alt}
                                     className="h-full w-full max-h-full max-w-full object-contain cursor-pointer"
                                 />
@@ -229,8 +231,8 @@ function Venue() {
                 </div>
 
                 <div className="border-b border-slate-900/20 my-4 w-4/5"></div>
-                <div>
-                    <div className="flex w-full max-w-5xl lg:justify-around gap-4 lg:items-start items-center mt-4 lg:flex-row flex-col">
+                <div className="lg:w-2/3 w-full">
+                    <div className="flex w-full lg:justify-around gap-4 lg:items-start items-center mt-4 lg:flex-row flex-col">
                         <div className="lg:w-2/3 w-full flex flex-col gap-6">
                             <h1 className="text-center font-bold text-4xl text-[#088D9A] w-full truncate">
                                 {venue.name}
@@ -692,8 +694,6 @@ function Venue() {
                                 </div>
                             ))}
                     </div>
-
-                    {console.log(venue.bookings)}
 
                     <dialog
                         ref={dialogRef}

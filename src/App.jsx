@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { APIVenues } from "./assets/Constants";
 import { useVenueStore } from "./assets/useVenueStore";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 
 function App() {
@@ -297,7 +297,6 @@ function App() {
                 />
             </Helmet>
             <div className="max-w-7xl mx-auto p-4">
-                <ToastContainer position="top-center" autoClose={3000} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {displayedVenues.map((venue) => (
                         <Link
